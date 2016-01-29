@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:VBox xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx"
+		 xmlns:gui="nl.bransom.gui.*"
+		 enabled="{parentXml != null}"
+		 creationComplete="init()">
+	
+	<fx:Script>
+		<![CDATA[
+			import mx.binding.utils.BindingUtils;
+			import mx.collections.ArrayCollection;
+			import mx.collections.Sort;
+			import mx.events.DataGridEvent;
+			
+			import nl.bransom.XmlUtils;
+			import nl.bransom.rest.RestClient;
+			
+			[Bindable] public var restClient:RestClient;
+			[Bindable] public var parentXml:XML;
+			[Bindable] public var objectName:String;
+			
+			public static const DATAGRID_FIELD_NAMES:ArrayCollection = new ArrayCollection(["",
+				"naam_instituut", "plaats_instituut", "naam_opleiding", "soort_opleiding", "vakken", "diploma",
+				"jaar_diploma"]);
+			public static const OPTIONS_DIPLOMA:Array = [
+				{label:"Nee", data:0},
+				{label:"Ja", data:1},
+				{label:"nvt", data:2}
+			];
+			public static const OPTIONS_SOORT_OPLEIDING:Array = [
+				{label:"algemeen", data:0},
+				{label:"vaktechnisch", data:1}
+			];
+			[Bindable] public static var _restClient:RestClient;
+			
+			private function init():void {
+				BindingUtils.bindSetter(setRestClient, this, "restClient");
+				BindingUtils.bindSetter(refreshXmlList, this, "parentXml");
+				BindingUtils.bindSetter(refreshXmlList, this, "objectName");
+			}
+			private function setRestClient(restClient:RestClient):void {
+				_restClient = restClient;
+			}
+			
+			private function createItem(event:Event = null):void {
+				var createdXml:XML = restClient.createEntityNode(parentXml, objectName, 0);
+				refreshXmlList();
+				dataGrid.selectedItem = createdXml;
+				dataGrid.scrollToIndex(dataGrid.selectedIndex);
+			}
+			
+			private function deleteItem(xmlToBeDeleted:XML):void {
+				restClient.deleteEntityNode(xmlToBeDeleted);
+				refreshXmlList();
+			}
+			
+			private function refreshXmlList(dummy:Object = null):void {
+				var xmlList:XMLList = XmlUtils.getElements(parentXml, objectName);
+				xmlList = XmlUtils.sortXmlList(xmlList, "jaar_diploma", Array.DESCENDING | Array.NUMERIC);
+				dataGrid.setXmlData(xmlList);
+			}
+			
+			private function compareSoortOpleiding(a:Object, b:Object, sortFields:Array = null):int {
+				return XmlUtils.compareComboOptions(OPTIONS_SOORT_OPLEIDING, a, b, "soort_opleiding");
+			}
+			private function compareDiploma(a:Object, b:Object, sortFields:Array = null):int {
+				return XmlUtils.compareComboOptions(OPTIONS_DIPLOMA, a, b, "diploma");
+			}
+		]]>
+	</fx:Script>
+	
+	<fx:Declarations>
+		<fx:Component id="cmpInstituut">
+			<gui:XmlTextInput restClient="{OpleidingTab._restClient}" objectXml="{data as XML}"
+							  propertyName="{OpleidingTab.DATAGRID_FIELD_NAMES.getItemAt(1)}" />
+		</fx:Component>
+		<fx:Component id="cmpPlaats">
+			<gui:XmlTextInput restClient="{OpleidingTab._restClient}" objectXml="{data as XML}"
+							  propertyName="{OpleidingTab.DATAGRID_FIELD_NAMES.getItemAt(2)}" />
+		</fx:Component>
+		<fx:Component id="cmpOpleiding">
+			<gui:XmlTextInput restClient="{OpleidingTab._restClient}" objectXml="{data as XML}"
+							  propertyName="{OpleidingTab.DATAGRID_FIELD_NAMES.getItemAt(3)}" />
+		</fx:Component>
+		<fx:Component id="cmpSoortOpleiding">
+			<gui:XmlComboBox restClient="{OpleidingTab._restClient}" objectXml="{data as XML}"
+							 propertyName="{OpleidingTab.DATAGRID_FIELD_NAMES.getItemAt(4)}"
+							 itemArray="{OpleidingTab.OPTIONS_SOORT_OPLEIDING}" />
+		</fx:Component>
+		<fx:Component id="cmpVakken">
+			<gui:XmlTextArea restClient="{OpleidingTab._restClient}" objectXml="{data as XML}"
+							 propertyName="{OpleidingTab.DATAGRID_FIELD_NAMES.getItemAt(5)}" />
+		</fx:Component>
+		<fx:Component id="cmpDiploma">
+			<gui:XmlComboBox restClient="{OpleidingTab._restClient}" objectXml="{data as XML}"
+							 propertyName="{OpleidingTab.DATAGRID_FIELD_NAMES.getItemAt(6)}"
+							 itemArray="{OpleidingTab.OPTIONS_DIPLOMA}" />
+		</fx:Component>
+		<fx:Component id="cmpJaarDiploma">
+			<gui:XmlTextInput restClient="{OpleidingTab._restClient}" objectXml="{data as XML}"
+							  propertyName="{OpleidingTab.DATAGRID_FIELD_NAMES.getItemAt(7)}" />
+		</fx:Component>
+	</fx:Declarations>
+	
+	<mx:HBox>
+		<mx:Button label="Toevoegen" icon="{CVtool.ICON_CREATE}" enabled="{parentXml != null}" click="createItem()" />
+		<mx:Button label="Verwijderen" icon="{CVtool.ICON_DELETE}" enabled="{dataGrid.selectedItem != null}"
+				   click="deleteItem(dataGrid.selectedItem as XML)" />
+	</mx:HBox>
+	<gui:XmlDataGrid id="dataGrid" fieldNames="{DATAGRID_FIELD_NAMES}" width="100%" height="100%">
+		<gui:columns>
+			<mx:DataGridColumn width="20" sortable="false" />
+			<mx:DataGridColumn headerText="Instituut" itemRenderer="{cmpInstituut}" rendererIsEditor="true" />
+			<mx:DataGridColumn headerText="Plaats" itemRenderer="{cmpPlaats}" rendererIsEditor="true" />
+			<mx:DataGridColumn headerText="Opleiding" itemRenderer="{cmpOpleiding}" rendererIsEditor="true" />
+			<mx:DataGridColumn headerText="Soort opleiding" itemRenderer="{cmpSoortOpleiding}" rendererIsEditor="true"
+							   sortCompareFunction="compareSoortOpleiding" width="125" />
+			<mx:DataGridColumn headerText="Vakken" itemRenderer="{cmpVakken}" rendererIsEditor="true" width="150" />
+			<mx:DataGridColumn headerText="Diploma" itemRenderer="{cmpDiploma}" rendererIsEditor="true"
+							   sortCompareFunction="compareDiploma" width="75" />
+			<mx:DataGridColumn headerText="Jaar" itemRenderer="{cmpJaarDiploma}" rendererIsEditor="true"
+							   width="60" />
+		</gui:columns>
+	</gui:XmlDataGrid>
+</mx:VBox>

@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:VBox xmlns:mx="library://ns.adobe.com/flex/mx"
+		 xmlns:fx="http://ns.adobe.com/mxml/2009"
+		 xmlns:cvtool="nl.cerios.cvtool.*"
+		 xmlns:gui="nl.bransom.gui.*"
+		 enabled="{cvAdminTab.setOfAccountXml != null}"
+		 creationComplete="init()">
+	
+	<fx:Script>
+		<![CDATA[
+			import mx.binding.utils.BindingUtils;
+			import mx.collections.ArrayCollection;
+			import mx.controls.Alert;
+			import mx.events.CloseEvent;
+			import mx.events.DataGridEvent;
+			
+			import nl.bransom.PersistencyStatus;
+			import nl.bransom.XmlUtils;
+			import nl.bransom.gui.Utils;
+			import nl.bransom.rest.RestClient;
+			import nl.cerios.cvtool.CvAdminTabs;
+
+			public static const DATAGRID_FIELD_NAMES:ArrayCollection = new ArrayCollection(["",
+				"name", "businessunit", "rol", "rol"]);
+			
+			[Bindable] public var restClient:RestClient;
+			[Bindable] public var cvAdminTab:CvAdminTabs;
+			
+			[Bindable] public static var OPTIONS_ROL:Array = [
+				{"label":"", "data":null}
+			];
+			[Bindable] public static var OPTIONS_BUSINESS_UNIT:Array = [
+				{"label":"", "data":null}
+			];
+			[Bindable] public static var _restClient:RestClient;
+			[Bindable] public static var BUSINESS_UNIT_SET:XMLList;
+			
+			private function init():void {
+				BindingUtils.bindSetter(setRestClient, this, "restClient");
+				BindingUtils.bindSetter(setSetOfRolXml, cvAdminTab, "setOfRolXml");
+				BindingUtils.bindSetter(setSetOfBusinessunitXml, cvAdminTab, "setOfBusinessunitXml");
+				BindingUtils.bindSetter(refreshXmlList, cvAdminTab, "setOfAccountXml");
+			}
+			private function setRestClient(restClient:RestClient):void {
+				_restClient = restClient;
+			}
+			private function setSetOfRolXml(xml:XML):void {
+				OPTIONS_ROL = [{"label":"", "data":null}];
+				for each (var rolXml:XML in XmlUtils.getElements(cvAdminTab.setOfRolXml, "rol")) {
+					var naam:String = XmlUtils.getTextContent(rolXml, "naam");
+					OPTIONS_ROL.push({"label":naam, "data":rolXml.@id});
+				}
+				// Refresh objectXmlCollection.
+				refreshXmlList();
+			}
+			private function setSetOfBusinessunitXml(xml:XML):void {
+				BUSINESS_UNIT_SET = XmlUtils.getElements(cvAdminTab.setOfBusinessunitXml, "businessunit");
+				OPTIONS_BUSINESS_UNIT = [{"label":"", "data":null}];
+				for each (var businessunitXml:XML in BUSINESS_UNIT_SET) {
+					var naam:String = XmlUtils.getTextContent(businessunitXml, "naam");
+					OPTIONS_BUSINESS_UNIT.push({"label":naam, "data":businessunitXml.@id});
+				}
+				// Refresh objectXmlCollection.
+				refreshXmlList();
+			}
+
+			private function createItem(event:Event = null):void {
+				var createdXml:XML = restClient.createEntityNode(cvAdminTab.setOfAccountXml, "_account");
+				// Add default role 'edit eigen CV'.
+				for each (var item:Object in AccountsTab.OPTIONS_ROL) {
+					if (item.label == CVtool.ROL_EDIT_EIGEN_CV) {
+						createdXml.appendChild(<rol id={item.data} />);
+						break;
+					}
+				}
+				// Update the GUI.
+				refreshXmlList();
+				dataGrid.selectedItem = createdXml;
+				dataGrid.scrollToIndex(dataGrid.selectedIndex);
+			}
+			
+			private function deleteItem(xmlToBeDeleted:XML):void {
+				var message:String = "Moet het account '" + XmlUtils.getTextContent(xmlToBeDeleted, "name")
+						+ "' en alle bijbehorende cv-gegevens definitief worden verwijderd?";
+				Utils.alert(message, "Bevestigen", Alert.YES | Alert.NO, this, confirmDeleteHandler, null, Alert.NO);
+			}
+			private function confirmDeleteHandler(closeEvent:CloseEvent):void {
+				if (closeEvent.detail != Alert.YES) {
+					return;
+				}
+				var xmlToBeDeleted:XML = dataGrid.selectedItem as XML;
+				restClient.deleteEntityNode(xmlToBeDeleted);
+				// Refresh the GUI.
+				refreshXmlList();
+			}
+			
+			private function refreshXmlList(dummy:Object = null):void {
+				// Refresh the list only if al businessunit data is available. This ensures proper initialization of
+				// the comboboxes.
+				if ((cvAdminTab.setOfBusinessunitXml == null) || (cvAdminTab.setOfRolXml == null)) {
+					dataGrid.setXmlData(null);
+				} else {
+					var xmlList:XMLList = XmlUtils.getElements(cvAdminTab.setOfAccountXml, "_account");
+					xmlList = XmlUtils.sortXmlList(xmlList, "name", Array.CASEINSENSITIVE);
+					dataGrid.setXmlData(xmlList);
+				}
+			}
+			
+			private function compareBusinessunit(a:Object, b:Object, sortFields:Array = null):int {
+				var xmlA:XML = XmlUtils.getElements(a as XML, "businessunit")[0];
+				var xmlB:XML = XmlUtils.getElements(b as XML, "businessunit")[0];
+				return XmlUtils.compareComboOptions(OPTIONS_BUSINESS_UNIT, xmlA, xmlB, "@id");
+			}
+			
+			public static function getBusinessunitOption(accountXml:XML):Object {
+				var businessunitXml:XML = XmlUtils.getElements(accountXml, "businessunit")[0];
+				if (businessunitXml != null) {
+					return XmlUtils.getComboOption(OPTIONS_BUSINESS_UNIT, businessunitXml.@id);
+				} else {
+					return null;
+				}
+			}
+			
+			public static function setBusinessunitLink(accountXml:XML, businessunitId:String):void {
+				var businessunitXml:XML = XmlUtils.getElements(accountXml, "businessunit")[0];
+				var hasChanged:Boolean = false;
+				if ((businessunitXml != null) && (businessunitId != businessunitXml.@id)) {
+					hasChanged = XmlUtils.removeReferenceNode(accountXml, "businessunit", businessunitXml.@id);
+					businessunitXml = null;
+				}
+				if ((businessunitXml == null) && (businessunitId != null)) {
+					hasChanged = XmlUtils.addReferenceNode(accountXml, "businessunit", businessunitId);
+				}
+				if (hasChanged) {
+					_restClient.markAsChanged(accountXml);
+				}
+			}
+			
+			private function compareRolEditEigenCV(a:Object, b:Object, sortFields:Array = null):int {
+				return compareRol(a, b, CVtool.ROL_EDIT_EIGEN_CV);
+			}
+			private function compareRolViewAlleCVs(a:Object, b:Object, sortFields:Array = null):int {
+				return compareRol(a, b, CVtool.ROL_VIEW_ALLE_CVS);
+			}
+			private function compareRol(a:Object, b:Object, rolNaam:String):int {
+				var hasRolA:Boolean = hasRol(a as XML, rolNaam);
+				var hasRolB:Boolean = hasRol(b as XML, rolNaam);
+				if (hasRolA == hasRolB) {
+					return 0;
+				} else if (hasRolA) {
+					return -1;
+				} else {
+					return 1;
+				}
+			}
+			
+			public static function hasRol(accountXml:XML, rol:String):Boolean {
+				for each (var rolXml:XML in XmlUtils.getElements(accountXml, "rol")) {
+					var comboOption:Object = XmlUtils.getComboOption(OPTIONS_ROL, rolXml.@id);
+					if ((comboOption != null) && (rol == comboOption.label)) {
+						return true;
+					}
+				}
+				return false;
+			}
+			
+			public static function setRol(accountXml:XML, rolNaam:String, isSelected:Boolean):void {
+				var rolId:String = null;
+				for each (var option:Object in OPTIONS_ROL) {
+					if (option.label == rolNaam) {
+						rolId = option.data;
+						break;
+					}
+				}
+
+				var hasChanged:Boolean = false;
+				if (isSelected) {
+					hasChanged = XmlUtils.addReferenceNode(accountXml, "rol", rolId);
+				} else {
+					hasChanged = XmlUtils.removeReferenceNode(accountXml, "rol", rolId);
+				}
+				if (hasChanged) {
+					_restClient.markAsChanged(accountXml);
+				}
+			}
+		]]>
+	</fx:Script>
+	
+	<fx:Declarations>
+		<fx:Component id="cmpName">
+			<gui:XmlTextInput restClient="{AccountsTab._restClient}" objectXml="{data as XML}"
+							  propertyName="{AccountsTab.DATAGRID_FIELD_NAMES.getItemAt(1)}" />
+		</fx:Component>
+		<fx:Component id="cmpBusinessunit">
+			<mx:ComboBox dataProvider="{AccountsTab.OPTIONS_BUSINESS_UNIT}" rowCount="10"
+						 selectedItem="{AccountsTab.getBusinessunitOption(data as XML)}"
+						 change="AccountsTab.setBusinessunitLink(data as XML, selectedItem.data)"/>
+		</fx:Component>
+		<fx:Component id="cmpRolEditEigenCV">
+			<mx:CheckBox selected="{AccountsTab.hasRol(data as XML, CVtool.ROL_EDIT_EIGEN_CV)}"
+						 change="AccountsTab.setRol(data as XML, CVtool.ROL_EDIT_EIGEN_CV, selected)"
+						 paddingLeft="70" />
+		</fx:Component>
+		<fx:Component id="cmpRolViewAlleCVs">
+			<mx:CheckBox selected="{AccountsTab.hasRol(data as XML, CVtool.ROL_VIEW_ALLE_CVS)}"
+						 change="AccountsTab.setRol(data as XML, CVtool.ROL_VIEW_ALLE_CVS, selected)"
+						 paddingLeft="70" />
+		</fx:Component>
+	</fx:Declarations>
+
+	<mx:HBox>
+		<mx:Button label="Toevoegen" icon="{CVtool.ICON_CREATE}" click="createItem()" />
+		<mx:Button label="Verwijderen" icon="{CVtool.ICON_DELETE}" enabled="{dataGrid.selectedItem != null}"
+				   click="deleteItem(dataGrid.selectedItem as XML)" />
+	</mx:HBox>
+	<gui:XmlDataGrid id="dataGrid" fieldNames="{DATAGRID_FIELD_NAMES}" height="100%">
+		<gui:columns>
+			<mx:DataGridColumn width="20" sortable="false" />
+			<mx:DataGridColumn headerText="Naam" itemRenderer="{cmpName}" rendererIsEditor="true" width="230" />
+			<mx:DataGridColumn headerText="Business unit" itemRenderer="{cmpBusinessunit}" rendererIsEditor="true"
+							   sortCompareFunction="compareBusinessunit" width="115" />
+			<mx:DataGridColumn headerText="Rol '{CVtool.ROL_EDIT_EIGEN_CV}'" itemRenderer="{cmpRolEditEigenCV}"
+							   rendererIsEditor="true" resizable="false" sortCompareFunction="compareRolEditEigenCV"
+							   width="145" />
+			<mx:DataGridColumn headerText="Rol '{CVtool.ROL_VIEW_ALLE_CVS}'" itemRenderer="{cmpRolViewAlleCVs}"
+							   rendererIsEditor="true" resizable="false" sortCompareFunction="compareRolViewAlleCVs"
+							   width="145" />
+		</gui:columns>
+	</gui:XmlDataGrid>
+</mx:VBox>

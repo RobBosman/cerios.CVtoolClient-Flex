@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:VBox xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx"
+		 xmlns:sp="library://ns.adobe.com/flex/spark"
+		 xmlns:gui="nl.bransom.gui.*"
+		 enabled="{parentXml != null}"
+		 creationComplete="init()">
+	
+	<fx:Script>
+		<![CDATA[
+			import mx.binding.utils.BindingUtils;
+			import mx.collections.ArrayCollection;
+			import mx.events.DataGridEvent;
+			
+			import nl.bransom.XmlUtils;
+			import nl.bransom.rest.RestClient;
+			
+			[Bindable] public var restClient:RestClient;
+			[Bindable] public var parentXml:XML;
+			[Bindable] public var objectName:String;
+			
+			public static const DATAGRID_FIELD_NAMES:ArrayCollection = new ArrayCollection(["",
+				"taal", "mondeling", "schriftelijk"]);
+			public static const OPTIONS_TALENKENNIS:Array = [
+				{label:'moedertaal', data:1},
+				{label:'vloeiend', data:2},
+				{label:'goed', data:3},
+				{label:'redelijk', data:4},
+				{label:'matig', data:5},
+				{label:'zwak', data:6}
+			];
+			[Bindable] public static var _restClient:RestClient;
+			
+			private function init():void {
+				BindingUtils.bindSetter(setRestClient, this, "restClient");
+				BindingUtils.bindSetter(refreshXmlList, this, "parentXml");
+				BindingUtils.bindSetter(refreshXmlList, this, "objectName");
+			}
+			private function setRestClient(restClient:RestClient):void {
+				_restClient = restClient;
+			}
+			
+			private function createItem(event:Event = null):void {
+				var createdXml:XML = restClient.createEntityNode(parentXml, objectName, 0);
+				refreshXmlList();
+				dataGrid.selectedItem = createdXml;
+				dataGrid.scrollToIndex(dataGrid.selectedIndex);
+			}
+			
+			private function deleteItem(xmlToBeDeleted:XML):void {
+				restClient.deleteEntityNode(xmlToBeDeleted);
+				refreshXmlList();
+			}
+			
+			private function refreshXmlList(dummy:Object = null):void {
+				var xmlList:XMLList = XmlUtils.getElements(parentXml, objectName);
+				xmlList = XmlUtils.sortXmlList(xmlList, "mondeling", Array.NUMERIC);
+				dataGrid.setXmlData(xmlList);
+			}
+		]]>
+	</fx:Script>
+	
+	<fx:Declarations>
+		<fx:Component id="cmpTaal">
+			<gui:XmlTextInput restClient="{TalenkennisTab._restClient}" objectXml="{data as XML}"
+							  propertyName="{TalenkennisTab.DATAGRID_FIELD_NAMES.getItemAt(1)}" />
+		</fx:Component>
+		<fx:Component id="cmpMondeling">
+			<gui:XmlComboBox restClient="{TalenkennisTab._restClient}" objectXml="{data as XML}"
+							 propertyName="{TalenkennisTab.DATAGRID_FIELD_NAMES.getItemAt(2)}"
+							 itemArray="{TalenkennisTab.OPTIONS_TALENKENNIS}" />
+		</fx:Component>
+		<fx:Component id="cmpSchriftelijk">
+			<gui:XmlComboBox restClient="{TalenkennisTab._restClient}" objectXml="{data as XML}"
+							 propertyName="{TalenkennisTab.DATAGRID_FIELD_NAMES.getItemAt(3)}"
+							 itemArray="{TalenkennisTab.OPTIONS_TALENKENNIS}" />
+		</fx:Component>
+	</fx:Declarations>
+	
+	<mx:HBox>
+		<mx:Button label="Toevoegen" icon="{CVtool.ICON_CREATE}" enabled="{parentXml != null}" click="createItem()" />
+		<mx:Button label="Verwijderen" icon="{CVtool.ICON_DELETE}" enabled="{dataGrid.selectedItem != null}"
+				   click="deleteItem(dataGrid.selectedItem as XML)" />
+	</mx:HBox>
+	<gui:XmlDataGrid id="dataGrid" fieldNames="{DATAGRID_FIELD_NAMES}" height="100%">
+		<gui:columns>
+			<mx:DataGridColumn width="20" sortable="false" />
+			<mx:DataGridColumn headerText="Taal" itemRenderer="{cmpTaal}" rendererIsEditor="true"
+							   width="230" />
+			<mx:DataGridColumn headerText="Mondeling" itemRenderer="{cmpMondeling}" rendererIsEditor="true"
+							   width="120" />
+			<mx:DataGridColumn headerText="Schriftelijk" itemRenderer="{cmpSchriftelijk}" rendererIsEditor="true"
+							   width="120" />
+		</gui:columns>
+	</gui:XmlDataGrid>
+</mx:VBox>

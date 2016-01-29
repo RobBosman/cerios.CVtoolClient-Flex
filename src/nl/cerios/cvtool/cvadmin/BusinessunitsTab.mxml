@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:VBox xmlns:mx="library://ns.adobe.com/flex/mx"
+		 xmlns:fx="http://ns.adobe.com/mxml/2009"
+		 xmlns:cvtool="nl.cerios.cvtool.*"
+		 xmlns:gui="nl.bransom.gui.*"
+		 enabled="{cvAdminTab.setOfBusinessunitXml != null}"
+		 creationComplete="init()">
+	
+	<fx:Script>
+		<![CDATA[
+			import mx.binding.utils.BindingUtils;
+			import mx.collections.ArrayCollection;
+			import mx.events.CloseEvent;
+			import mx.events.DataGridEvent;
+			
+			import nl.bransom.XmlUtils;
+			import nl.bransom.gui.Utils;
+			import nl.bransom.rest.RestClient;
+			import nl.cerios.cvtool.CvAdminTabs;
+
+			public static const DATAGRID_FIELD_NAMES:ArrayCollection = new ArrayCollection([ "",
+				"naam", "manager_naam", "manager_email", "manager_telefoonnummer"]);
+			
+			[Bindable] public var restClient:RestClient;
+			[Bindable] public var cvAdminTab:CvAdminTabs;
+			
+			[Bindable] public static var _restClient:RestClient;
+			
+			private function init():void {
+				BindingUtils.bindSetter(setRestClient, this, "restClient");
+				BindingUtils.bindSetter(refreshXmlList, cvAdminTab, "setOfBusinessunitXml");
+			}
+			private function setRestClient(restClient:RestClient):void {
+				_restClient = restClient;
+			}
+			
+			private function createItem(event:Event = null):void {
+				var createdXml:XML = restClient.createEntityNode(cvAdminTab.setOfBusinessunitXml, "businessunit");
+				// Update the GUI.
+				refreshXmlList();
+				dataGrid.selectedItem = createdXml;
+				dataGrid.scrollToIndex(dataGrid.selectedIndex);
+			}
+			
+			private function deleteItem(xmlToBeDeleted:XML):void {
+				var xmlList:XMLList = XmlUtils.getElements(xmlToBeDeleted, "_account");
+				if (xmlList.length() > 0) {
+					Utils.alert("Business unit '" + XmlUtils.getElements(xmlToBeDeleted, "naam")
+						+ "' kan niet worden verwijderd omdat er nog " + xmlList.length()
+						+ " accounts aan zijn verbonden.", "Helaas!");
+				} else {
+					restClient.deleteEntityNode(xmlToBeDeleted);
+					// Refresh the GUI.
+					refreshXmlList();
+				}
+			}
+			
+			private function refreshXmlList(dummy:Object = null):void {
+				var xmlList:XMLList = XmlUtils.getElements(cvAdminTab.setOfBusinessunitXml, "businessunit");
+				xmlList = XmlUtils.sortXmlList(xmlList, "naam");
+				dataGrid.setXmlData(xmlList);
+			}
+		]]>
+	</fx:Script>
+	
+	<fx:Declarations>
+		<fx:Component id="cmpNaam">
+			<gui:XmlTextInput restClient="{BusinessunitsTab._restClient}" objectXml="{data as XML}"
+							  propertyName="{BusinessunitsTab.DATAGRID_FIELD_NAMES.getItemAt(1)}" />
+		</fx:Component>
+		<fx:Component id="cmpManagerNaam">
+			<gui:XmlTextInput restClient="{BusinessunitsTab._restClient}" objectXml="{data as XML}"
+							  propertyName="{BusinessunitsTab.DATAGRID_FIELD_NAMES.getItemAt(2)}" />
+		</fx:Component>
+		<fx:Component id="cmpManagerEmail">
+			<gui:XmlTextInput restClient="{BusinessunitsTab._restClient}" objectXml="{data as XML}"
+							  propertyName="{BusinessunitsTab.DATAGRID_FIELD_NAMES.getItemAt(3)}" />
+		</fx:Component>
+		<fx:Component id="cmpManagerTelefoonnummer">
+			<gui:XmlTextInput restClient="{BusinessunitsTab._restClient}" objectXml="{data as XML}"
+							  propertyName="{BusinessunitsTab.DATAGRID_FIELD_NAMES.getItemAt(4)}" />
+		</fx:Component>
+	</fx:Declarations>
+
+	<mx:HBox>
+		<mx:Button label="Toevoegen" icon="{CVtool.ICON_CREATE}" enabled="{dataGrid.dataProvider.source != null}"
+				   click="createItem()" />
+		<mx:Button label="Verwijderen" icon="{CVtool.ICON_DELETE}" enabled="{dataGrid.selectedItem != null}"
+				   click="deleteItem(dataGrid.selectedItem as XML)" />
+	</mx:HBox>
+	<gui:XmlDataGrid id="dataGrid" fieldNames="{DATAGRID_FIELD_NAMES}" height="100%">
+		<gui:columns>
+			<mx:DataGridColumn width="20" sortable="false" />
+			<mx:DataGridColumn headerText="Naam" itemRenderer="{cmpNaam}" rendererIsEditor="true"
+							   width="100" />
+			<mx:DataGridColumn headerText="Manager" itemRenderer="{cmpManagerNaam}" rendererIsEditor="true"
+							   width="200" />
+			<mx:DataGridColumn headerText="Email" itemRenderer="{cmpManagerEmail}" rendererIsEditor="true"
+							   width="250" />
+			<mx:DataGridColumn headerText="Telefoon" itemRenderer="{cmpManagerTelefoonnummer}" rendererIsEditor="true"
+							   sortable="false" width="150" />
+		</gui:columns>
+	</gui:XmlDataGrid>
+</mx:VBox>

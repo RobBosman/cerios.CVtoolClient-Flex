@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Application xmlns:fx="http://ns.adobe.com/mxml/2009" 
+				xmlns:mx="library://ns.adobe.com/flex/mx"
+				xmlns:s="library://ns.adobe.com/flex/spark"
+				xmlns:gui="nl.bransom.gui.*"
+				xmlns:cvtool="nl.cerios.cvtool.*"
+				xmlns:cvadmin="nl.cerios.cvtool.cvadmin.*"
+				xmlns:cveditor="nl.cerios.cvtool.cveditor.*"
+				creationComplete="init()">
+	
+	<fx:Style source="CVtool.css" />
+	
+	<fx:Script>
+		<![CDATA[
+			import mx.binding.utils.BindingUtils;
+			import mx.controls.Alert;
+			import mx.events.CloseEvent;
+			
+			import nl.bransom.ChainableTask;
+			import nl.bransom.MD5;
+			import nl.bransom.PersistencyStatus;
+			import nl.bransom.XmlUtils;
+			import nl.bransom.gui.Utils;
+			import nl.bransom.rest.RestClient;
+			
+			[Embed(source="/assets/Cerios_banner.png")] public static const CERIOS_BANNER:Class;
+			[Embed(source="/assets/CVtool.png")] public static const CVTOOL_IMG:Class;
+			[Embed(source="/assets/icon_create.png")] public static const ICON_CREATE:Class;
+			[Embed(source="/assets/icon_change.png")] public static const ICON_CHANGE:Class;
+			[Embed(source="/assets/icon_delete.png")] public static const ICON_DELETE:Class;
+			[Embed(source="/assets/icon_flag_NL.png")] public static const ICON_FLAG_NL:Class;
+			[Embed(source="/assets/icon_flag_UK.png")] public static const ICON_FLAG_UK:Class;
+			
+			public static const APP_TITLE:String = "Cerios CVtool";
+			public static const APP_VERSION:String = "v20151228";
+			public static const ROL_EDIT_EIGEN_CV:String = "edit eigen CV";
+			public static const ROL_VIEW_ALLE_CVS:String = "view alle CVs";
+			public static const REST_APP:String = "cv";
+			private static const AUTH_URL:String = "/cvtool/cvtool.php";
+			private static const REST_BASE_URL:String = "/bransom/REST/";
+			
+			[Bindable] private var restClient:RestClient;
+			[Bindable] private var signedInAccountXml:XML;
+			
+			private function init():void {
+				restClient = new RestClient(REST_BASE_URL, REST_APP, AUTH_URL);
+				BindingUtils.bindSetter(setSignedInAccountId, restClient, "signedInAccountId");
+				
+				currentState = "INIT";
+				
+				var splashScreenDelayTimer:Timer = new Timer(1000);
+				splashScreenDelayTimer.repeatCount = 1;
+				splashScreenDelayTimer.start();
+				splashScreenDelayTimer.addEventListener(TimerEvent.TIMER, splashScreenDelayExpired);
+				
+				restClient.getAuthorization();
+			}
+			private function splashScreenDelayExpired(event:Event = null):void {
+				if (signedInAccountXml == null) {
+					currentState = "SIGNED_OUT";
+				}
+			}
+			private function setSignedInAccountId(signedInAccountId:String):void {
+				if (signedInAccountId != null) {
+					// Fetch the credentials.
+					var restUrlParams:Object = {
+						"$scope":"Pa",
+						"rol/$scope":"P"
+					};
+					restClient.read("CREDENTIALS", "_account/" + signedInAccountId, restUrlParams, setSignedInAccountXml);
+				} else {
+					// Switch to the signed-out state.
+					currentState = "SIGNED_OUT";
+				}
+			}
+			private function setSignedInAccountXml(signedInAccountXml:XML):void {
+				this.signedInAccountXml = signedInAccountXml;
+				if (signedInAccountXml == null) {
+					// Switch to the signed-out state.
+					currentState = "SIGNED_OUT";
+				} else {
+					// Check if a 'manager' signed in.
+					if (hasRol(signedInAccountXml, ROL_VIEW_ALLE_CVS)) {
+						currentState = "SIGNED_IN_ADMIN";
+					} else {
+						currentState = "SIGNED_IN_STAFF";
+					}
+				}
+			}
+			
+			private function hasRol(accountXml:XML, rolNaam:String):Boolean {
+				var rolList:XMLList = XmlUtils.getElements(accountXml, "rol")
+				for (var i:uint = 0; i < rolList.length(); i++) {
+					if (XmlUtils.getTextContent(rolList[i], "naam") == rolNaam) {
+						return true;
+					}
+				}
+				return false;
+			}
+			
+			private function getSignInText():String {
+				return "Om de CVtool te gebruiken moet je je aanmelden met je <b>Cerios e-mail account</b>."
+					+ "<br/>Tijdens het inlogproces controleert de CVtool je e-mailadres, je moet daar eenmalig toestemming voor geven. "
+					+ "<a href='https://security.google.com/settings/security/permissions'><u><b>Hier</b></u></a>"
+					+ " kun je die toestemming bekijken en eventueel weer intrekken."
+					+ "<br/><br/><i>Problemen? Mail even naar "
+					+ "<a href='mailto:rob.bosman@cerios.nl?subject=CVtool'><u>rob.bosman@cerios.nl</u></a>.</i>";
+			}
+
+			private function signOut():void {
+				if (restClient.status != PersistencyStatus.CHANGED) {
+					// No changes to save, just sign-out.
+					signOutChainableMethod();
+				} else if (restClient.useAutoSave) {
+					// First save any changes and then sign-out.
+					restClient.save(null, new ChainableTask(signOutChainableMethod));
+				} else {
+					var message:String = "Wijzigingen opslaan?";
+					Utils.alert(message, "Bevestigen", Alert.YES | Alert.NO | Alert.CANCEL, this, confirmSignOutHandler,
+						null, Alert.YES);
+				}
+			}
+			private function confirmSignOutHandler(closeEvent:CloseEvent):void {
+				if (closeEvent.detail == Alert.YES) {
+					// First save any changes and then sign-out.
+					restClient.save(null, new ChainableTask(signOutChainableMethod));
+				} else if (closeEvent.detail == Alert.NO) {
+					signOutChainableMethod();
+				}
+			}
+			private function signOutChainableMethod(dummy:* = null, nextTask:ChainableTask = null):void {
+				restClient.signOut();
+			}
+		]]>
+	</fx:Script>
+	
+	<mx:states>
+		<mx:State name="INIT" />
+		<mx:State name="SIGNED_OUT" />
+		<mx:State name="SIGNED_IN_ADMIN" />
+		<mx:State name="SIGNED_IN_STAFF" />
+	</mx:states>
+	
+	<mx:transitions>
+		<mx:Transition fromState="INIT,SIGNED_OUT" toState="*">
+			<mx:Parallel>
+				<mx:Fade targets="{[signInTab, cvAdmin, cvEditor, signedInStuff, statusControlBar]}" />
+				<mx:Move targets="{[logo, logoBar]}" />
+			</mx:Parallel>
+		</mx:Transition>
+		<mx:Transition fromState="*" toState="SIGNED_OUT">
+			<mx:Parallel>
+				<mx:Fade targets="{[signInTab, cvAdmin, cvEditor, signedInStuff, statusControlBar]}" />
+				<mx:Move targets="{[logo, logoBar]}" />
+			</mx:Parallel>
+		</mx:Transition>
+	</mx:transitions>
+
+	<gui:DebugControlBar id="debugControlBar" restClient="{restClient}" appTitle="{APP_TITLE}"
+						 width="100%" styleName="debug-control-bar" />
+
+	<mx:Canvas width="100%" height="100%">
+		<mx:Image source="{CVTOOL_IMG}" alpha="0.1" width="100%" height="70%" horizontalAlign="right" right="20"
+				  bottom="0" />
+		<mx:VBox width="100%" height="100%">
+			<mx:HBox id="logoBar" width="100%" horizontalAlign="center" verticalAlign="top"
+					 height.INIT="40%" verticalAlign.INIT="bottom"
+					 height.SIGNED_OUT="40%" verticalAlign.SIGNED_OUT="bottom">
+				<mx:HBox id="logo" verticalAlign="middle"
+						 x.SIGNED_IN_ADMIN="0" y.SIGNED_IN_ADMIN="0"
+						 x.SIGNED_IN_STAFF="0" y.SIGNED_IN_STAFF="0">
+					<mx:Image source="{CERIOS_BANNER}" />
+					<mx:Label text="CVtool" styleName="title" height="100%" />
+				</mx:HBox>
+				<mx:HBox id="signedInStuff" includeIn="SIGNED_IN_ADMIN,SIGNED_IN_STAFF"
+						 verticalAlign="middle" width="100%">
+					<mx:Label text="{APP_VERSION}" styleName="version" top="0" />
+					<mx:Spacer width="100%" />
+					<mx:Label htmlText="" /><!-- dummy label to prevent the next label from mysteriously disappearing... -->
+					<mx:Label htmlText="aangemeld als &#x3C;b&#x3E;{
+							  XmlUtils.getTextContent(signedInAccountXml, 'name').replace(/\./g, ' ')
+							  }&#x3C;/b&#x3E;" verticalCenter="0" />
+					<mx:Button label="Afmelden" click="signOut()" verticalCenter="0" />
+				</mx:HBox>
+			</mx:HBox>
+			
+			<mx:VBox id="signInTab" includeIn="SIGNED_OUT" horizontalAlign="center" horizontalCenter="0" width="100%">
+				<mx:TextArea htmlText="{getSignInText()}" editable="false" textAlign="center" styleName="info"
+							 width="525" height="110" />
+				<mx:Button id="signInButton" label="Aanmelden" click="restClient.signIn()"/>
+			</mx:VBox>
+
+			<mx:ApplicationControlBar id="cvAdmin" includeIn="SIGNED_IN_ADMIN"
+									  styleName="main-container" width="100%" height="100%" >
+				<cvtool:CvAdminTabs restClient="{restClient}" signedInAccountXml="{signedInAccountXml}"
+									styleName="main-container" width="100%" height="100%" />
+			</mx:ApplicationControlBar>
+			<mx:ApplicationControlBar id="cvEditor" includeIn="SIGNED_IN_STAFF"
+									  width="100%" height="100%" >
+				<cvtool:CvEditorTabs restClient="{restClient}" signedInAccountXml="{signedInAccountXml}"
+									 styleName="main-container" width="100%" height="100%" />
+			</mx:ApplicationControlBar>
+		</mx:VBox>
+	</mx:Canvas>
+	
+	<gui:StatusControlBar id="statusControlBar" restClient="{restClient}" excludeFrom="INIT,SIGNED_OUT" width="100%" />
+</mx:Application>

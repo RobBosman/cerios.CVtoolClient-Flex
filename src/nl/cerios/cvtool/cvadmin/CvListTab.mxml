@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:HBox xmlns:mx="library://ns.adobe.com/flex/mx"
+		 xmlns:fx="http://ns.adobe.com/mxml/2009"
+		 xmlns:cvtool="nl.cerios.cvtool.*"
+		 xmlns:gui="nl.bransom.gui.*"
+		 enabled="{cvAdminTab.setOfAccountXml != null}"
+		 creationComplete="init()">
+	
+	<fx:Script>
+		<![CDATA[
+			import mx.binding.utils.BindingUtils;
+			import mx.collections.ArrayCollection;
+			
+			import nl.bransom.XmlUtils;
+			import nl.bransom.rest.RestClient;
+			import nl.cerios.cvtool.CvAdminTabs;
+			import nl.cerios.cvtool.CvEditorTabs;
+
+			public static const DATAGRID_FIELD_NAMES:ArrayCollection = new ArrayCollection(["",
+				"name", "businessunit"]);
+			
+			[Bindable] public var restClient:RestClient;
+			[Bindable] public var cvAdminTab:CvAdminTabs;
+			
+			[Bindable] public static var _restClient:RestClient;
+			[Bindable] public static var BUSINESS_UNIT_SET:XMLList;
+			
+			private function init():void {
+				BindingUtils.bindSetter(setRestClient, this, "restClient");
+				BindingUtils.bindSetter(setSetOfBusinessunitXml, cvAdminTab, "setOfBusinessunitXml");
+				BindingUtils.bindSetter(refreshXmlList, cvAdminTab, "setOfAccountXml");
+			}
+			private function setRestClient(restClient:RestClient):void {
+				_restClient = restClient;
+			}
+			private function setSetOfBusinessunitXml(xml:XML):void {
+				BUSINESS_UNIT_SET = XmlUtils.getElements(cvAdminTab.setOfBusinessunitXml, "businessunit");
+				// Refresh objectXmlCollection.
+				refreshXmlList();
+			}
+			
+			private function refreshXmlList(dummy:Object = null):void {
+				// Refresh the list only if all roles and businessunit data are available.
+				// This ensures proper initialization of the datagrid.
+				if (cvAdminTab.setOfBusinessunitXml == null) {
+					dataGrid.setXmlData(null);
+				} else {
+					var xmlList:XMLList = XmlUtils.getElements(cvAdminTab.setOfAccountXml, "_account");
+					xmlList = XmlUtils.sortXmlList(xmlList, "name", Array.CASEINSENSITIVE);
+					dataGrid.setXmlData(xmlList);
+				}
+			}
+			
+			private function compareBusinessunit(a:Object, b:Object, sortFields:Array = null):int {
+				var xmlA:XML = getBusinessunitXml(a as XML);
+				var xmlB:XML = getBusinessunitXml(b as XML);
+				return XmlUtils.compareProperties(xmlA, xmlB, "naam", Array.CASEINSENSITIVE);
+			}
+			
+			public static function getAccountName(accountXml:XML):String {
+				return XmlUtils.getTextContent(accountXml, "name");
+			}
+			
+			public static function getRunAsName(accountXml:XML):String {
+				if (accountXml != null) {
+					return getAccountName(accountXml).replace(/\./g, ' ');
+				} else {
+					return "...";
+				}
+			}
+			
+			public static function getBusinessunitName(accountXml:XML):String {
+				return XmlUtils.getTextContent(getBusinessunitXml(accountXml), "naam");
+			}
+			
+			private static function getBusinessunitXml(accountXml:XML):XML {
+				var dataBusinessunitXml:XML = XmlUtils.getElements(accountXml, "businessunit")[0];
+				if (dataBusinessunitXml != null) {
+					var businessunitId:String = dataBusinessunitXml.@id;
+					for each (var businessunitXml:XML in BUSINESS_UNIT_SET) {
+						if (businessunitXml.@id == businessunitId) {
+							return businessunitXml;
+						}
+					}
+				}
+				return null;
+			}
+			
+			private function downloadCv(accountId:String):void {
+				var locale:String = localeBG.selectedValue as String;
+				var layout:String = layoutBG.selectedValue as String;
+				CvEditorTabs.previewCv(restClient, accountId, locale, layout, false);
+			}
+		]]>
+	</fx:Script>
+	
+	<fx:Declarations>
+		<fx:Component id="cmpName">
+			<mx:Label text="{CvListTab.getAccountName(data as XML)}" />
+		</fx:Component>
+		<fx:Component id="cmpBusinessunit">
+			<mx:Label text="{CvListTab.getBusinessunitName(data as XML)}" />
+		</fx:Component>
+	</fx:Declarations>
+
+	<gui:XmlDataGrid id="dataGrid" fieldNames="{DATAGRID_FIELD_NAMES}" height="100%">
+		<gui:columns>
+			<mx:DataGridColumn width="20" sortable="false" />
+			<mx:DataGridColumn headerText="Naam" itemRenderer="{cmpName}" rendererIsEditor="true" width="230" />
+			<mx:DataGridColumn headerText="Business unit" itemRenderer="{cmpBusinessunit}" rendererIsEditor="true"
+							   sortCompareFunction="compareBusinessunit" width="115" />
+		</gui:columns>
+	</gui:XmlDataGrid>
+	<mx:VBox height="100%">
+		<mx:HBox id="cvStyleButtons">
+			<mx:VBox>
+				<mx:RadioButtonGroup id="localeBG" />
+				<mx:Label text="Taal" styleName="heading-label" />
+				<mx:HBox verticalAlign="middle">
+					<mx:RadioButton groupName="localeBG" label="Nederlands" value="nl_NL" selected="true" />
+					<mx:RadioButton icon="{CVtool.ICON_FLAG_NL}" />
+				</mx:HBox>
+				<mx:HBox verticalAlign="middle">
+					<mx:RadioButton groupName="localeBG" label="Engels" value="uk_UK" />
+					<mx:RadioButton icon="{CVtool.ICON_FLAG_UK}" />
+				</mx:HBox>
+			</mx:VBox>
+			<mx:VRule height="{cvStyleButtons.height}" />
+			<mx:VBox>
+				<mx:RadioButtonGroup id="layoutBG" />
+				<mx:Label text="Opmaak" styleName="heading-label" />
+				<mx:RadioButton groupName="layoutBG" label="Cerios" value="Cerios" selected="true" />
+				<mx:RadioButton groupName="layoutBG" label="geen" value="" />
+			</mx:VBox>
+			<mx:VRule height="{cvStyleButtons.height}" />
+			<mx:Button label="Download" enabled="{dataGrid.selectedItem != null}"
+					   click="downloadCv((dataGrid.selectedItem as XML).@id)" />
+		</mx:HBox>
+		<mx:Spacer height="100%" />
+		<mx:Button label="Aanmelden als  {CvListTab.getRunAsName(dataGrid.selectedItem as XML)}" enabled="{dataGrid.selectedItem != null}"
+				   click="restClient.signInAs((dataGrid.selectedItem as XML).@id)" />
+	</mx:VBox>
+</mx:HBox>

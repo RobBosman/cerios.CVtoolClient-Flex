@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:VBox xmlns:mx="library://ns.adobe.com/flex/mx"
+		 xmlns:fx="http://ns.adobe.com/mxml/2009"
+		 xmlns:cveditor="nl.cerios.cvtool.cveditor.*"
+		 enabled="{signedInAccountXml != null}"
+		 creationComplete="init()">
+	
+	<fx:Script>
+		<![CDATA[
+			import mx.binding.utils.BindingUtils;
+			
+			import nl.bransom.BrowserUtils;
+			import nl.bransom.ChainableTask;
+			import nl.bransom.PersistencyStatus;
+			import nl.bransom.RemoteInvokerHttp;
+			import nl.bransom.XmlUtils;
+			import nl.bransom.rest.RestClient;
+
+			[Bindable] public var restClient:RestClient;
+			[Bindable] public var signedInAccountXml:XML;
+			
+			[Bindable] private var cvXml:XML;
+			[Bindable] private var persoonsgegevensXml:XML;
+			
+			private function init():void {
+				BindingUtils.bindSetter(setSignedInAccountXml, this, "signedInAccountXml");
+			}
+			private function setSignedInAccountXml(xml:XML):void {
+				if (xml == null) {
+					setCvAccountXml(null);
+				} else {
+					restClient.read("CV_ACCOUNT", "_account/" + signedInAccountXml.@id, null, setCvAccountXml);
+				}
+			}
+			private function setCvAccountXml(cvAccountXml:XML):void {
+				if (cvAccountXml == null) {
+					cvXml = null;
+					persoonsgegevensXml = null;
+				} else {
+					cvXml = XmlUtils.getElements(cvAccountXml, "cv")[0];
+					// Create a new nodes if required.
+					if (cvXml == null) {
+						cvXml = restClient.createEntityNode(cvAccountXml, "cv");
+					}
+					persoonsgegevensXml = XmlUtils.getElements(cvXml, "persoonsgegevens")[0];
+					if (persoonsgegevensXml == null) {
+						persoonsgegevensXml = restClient.createEntityNode(cvXml, "persoonsgegevens");
+					}
+				}
+			}
+			
+			private function getInfoHtml(signedInAccountXml:XML):String {
+				const listItem:String = "\n&nbsp;&nbsp;&nbsp;&nbsp;▪ ";
+				const listLine:String = "\n&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
+				return "Welkom " + XmlUtils.getTextContent(signedInAccountXml, "name").replace(/\..*/g, '')
+					+ "!\n\nDit is versie <b>" + CVtool.APP_VERSION + "</b> van de <b>CERIOS CVtool</b>, waarmee je je curriculum vitae zowel in het Nederlands als in het Engels kunt invoeren."
+					+ "\nLet even op het volgende:\n"
+					+ listItem + "<i>AutoSave</i>: al je wijzigingen worden na 2 seconden vanzelf opgeslagen."
+					+ listLine + "Als je niet van plan bent iets te wijzigen, zet 'AutoSave' dan uit met de knop rechtsonder."
+					+ listItem + "<i>Werkopdrachten</i> zijn standaard gesorteerd op einddatum, maar dat kun je met drag&drop aanpassen."
+					+ listLine + "Dat kan handig zijn als je meerdere opdrachten tegelijk hebt."
+					+ listItem + "<i>Foto</i>: voeg hier je visitekaartje (jpg) in."
+					+ listItem + "<i>Publiceren</i> plaatst je CV in"
+					+ " <a href='http://devbox.cerios.nl/share/page/site/cv/documentlibrary' target='_blank'><u>Alfresco</u></a>."
+					+ listItem + "<i>Sorteren</i>: gegevens in tabellen kun je sorteren door op de kolomheader te klikken."
+					+ listLine + "Het sorteren van tabelgegevens heeft geen invloed op de volgorde in je cv, behalve bij <i>Werkopdrachten</i>."
+					+ listLine + "Die moet je met drag&drop zelf op de gewenste volgorde zetten."
+					+ "\n\nIk heb geprobeerd alles zo gebruiksvriendelijk mogelijk te maken, maar elke tip en (positieve ;-) kritiek is welkom."
+					+ "\nProblemen? Een bug ontdekt? Stuur even een mailtje naar "
+					+ "<a href='mailto:rob.bosman@cerios.nl?subject=CVtool'><u>rob.bosman@cerios.nl</u></a>."
+					+ "\n\nGroet,\nRob";
+			}
+			
+			public static function previewCv(restClient:RestClient, accountId:String, locale:String,
+											 layout:String, saveChangesFirst:Boolean):void {
+				var urlRequest:URLRequest = new URLRequest("generateCvDocx.php");
+				urlRequest.method = URLRequestMethod.POST;
+				urlRequest.data = "restTarget=" + CVtool.REST_APP + "/_account/" + accountId
+					+ "&locale=" + locale
+					+ "&layout=" + layout
+					+ "&jwt=" + restClient.jwt;
+				
+				// Create a chainable task for requesting the preview.
+				var requestPreviewTask:ChainableTask = new ChainableTask();
+				requestPreviewTask.oneArgChainableMethod = previewCvChainableMethod;
+				requestPreviewTask.argument = urlRequest;
+				
+				if (saveChangesFirst) {
+					// Save any changes before requesting the preview.
+					restClient.save(null, requestPreviewTask);
+				} else {
+					requestPreviewTask.execute();
+				}
+			}
+			
+			private static function previewCvChainableMethod(urlRequest:URLRequest, nextTask:ChainableTask = null):void {
+				navigateToURL(urlRequest, "_self");
+			}
+
+			private function publish():void {
+				// Perform the following steps:
+				// 1. save any changes to the REST server
+				// 2. publish the document in Alresco
+				// 3. publish the stored data on the REST server
+				// 4. mark the REST data as 'published'
+
+				// Create the last chain element.
+				// Step 4 will be done automatically by the REST client.
+				// Step 3: publish the stored data on the REST server.
+				var publishRestTask:ChainableTask = new ChainableTask();
+				publishRestTask.oneArgChainableMethod = restClient.publish;
+				publishRestTask.argument = cvXml;
+				// Step 2: publish the latest version in Alfresco.
+				var publishInAlfrescoTask:ChainableTask = new ChainableTask();
+				publishInAlfrescoTask.oneArgChainableMethod = publishInAlfresco;
+				publishInAlfrescoTask.nextTask = publishRestTask;
+				// Execute the chain.
+				// Step 1: save any changed data.
+				restClient.save(null, publishInAlfrescoTask);
+			}
+			
+			// Send a publish-in-Alfresco-request to the REST server.
+			private function publishInAlfresco(dummy:* = null, nextTask:ChainableTask = null):void {
+				// Compose the document name...
+				var docName:String = "cv " + XmlUtils.getTextContent(persoonsgegevensXml, "voornaam")
+						+ " " + XmlUtils.getTextContent(persoonsgegevensXml, "tussenvoegsel")
+						+ " " + XmlUtils.getTextContent(persoonsgegevensXml, "achternaam");
+				docName = docName.replace("  ", " ");
+				// ...and publish it in Alfresco.
+				var url:String = "publishToAlfresco.php";
+				var formData:String = "restTarget=" + CVtool.REST_APP + "/_account/" + signedInAccountXml.@id
+					+ "&documentName=" + encodeURIComponent(docName)
+					+ "&locale=" + "nl_NL"
+					+ "&layout=" + "Cerios";
+				// formData += "&authBasic=" + "Y3Z0b29sOmN2dG9vbA==";
+				
+				// Request the REST server to publish the data.
+				var remoteInvoker:RemoteInvokerHttp = new RemoteInvokerHttp();
+				remoteInvoker.authorizationHeader = restClient.getHttpAuthorizationHeader();
+				remoteInvoker.method = URLRequestMethod.POST;
+				remoteInvoker.requestFormData = formData;
+				remoteInvoker.url = url;
+				remoteInvoker.errorCallback = publishErrorCallback;
+				remoteInvoker.okCallback = publishOkCallback;
+				remoteInvoker.context.nextTask = nextTask;
+				remoteInvoker.send();
+				
+				restClient.status = PersistencyStatus.PUBLISHING;
+			}
+			private function publishErrorCallback(remoteInvoker:RemoteInvokerHttp):void {
+				restClient.errorHtmlText = remoteInvoker.getResponseText();
+				restClient.status = PersistencyStatus.UNCHANGED;
+			}
+			private function publishOkCallback(remoteInvoker:RemoteInvokerHttp):void {
+				restClient.status = PersistencyStatus.UNCHANGED;
+				// Continue with any follow-up task.
+				var context:Object = remoteInvoker.context;
+				if (context.nextTask != null) {
+					context.nextTask.execute();
+				}
+			}
+		]]>
+	</fx:Script>
+
+	<mx:TabNavigator width="100%" height="100%" styleName="main-container">
+		<mx:Canvas label="Info" width="100%" height="100%">
+			<mx:TextArea htmlText="{getInfoHtml(signedInAccountXml)}" editable="false" styleName="info"
+						 width="100%" height="100%" />
+		</mx:Canvas>
+		<cveditor:PersoonsgegevensTab label="Persoonsgegevens" restClient="{restClient}"
+									objectXml="{persoonsgegevensXml}" />
+		<cveditor:FotoTab label="Foto" restClient="{restClient}" objectXml="{persoonsgegevensXml}" />
+		<cveditor:ProfielTab label="Profiel" restClient="{restClient}" cvXml="{cvXml}"
+						   objectName="profiel" />
+		<cveditor:OpleidingTab label="Opleiding" restClient="{restClient}" parentXml="{cvXml}"
+							 objectName="opleiding" />
+		<cveditor:TalenkennisTab label="Talen" restClient="{restClient}" parentXml="{cvXml}"
+							   objectName="talenkennis" />
+		<cveditor:BranchekennisTab label="Branche" restClient="{restClient}" parentXml="{cvXml}"
+								objectName="branchekennis" />
+		<cveditor:VaardighedenTab label="Vaardigheden" restClient="{restClient}" parentXml="{cvXml}"
+								objectName="vaardigheid" />
+		<cveditor:WerkopdrachtenTab label="Werkervaring" restClient="{restClient}" parentXml="{cvXml}"
+								  objectName="werkopdracht" />
+	</mx:TabNavigator>
+	<mx:HBox width="100%" verticalAlign="middle">
+		<mx:Button label="Preview" icon="{CVtool.ICON_FLAG_NL}" labelPlacement="left"
+				   enabled="{signedInAccountXml != null}"
+				   click="previewCv(restClient, signedInAccountXml.@id, 'nl_NL', 'Cerios', true)" />
+		<mx:Button label="Preview" icon="{CVtool.ICON_FLAG_UK}"  labelPlacement="left"
+				   enabled="{signedInAccountXml != null}"
+				   click="previewCv(restClient, signedInAccountXml.@id, 'uk_UK', 'Cerios', true)" />
+		<mx:Spacer width="100%" />
+		<mx:Label text="{(cvXml.@published == 'true') ? 'Deze gegevens zijn gepubliceerd.'
+				  									  : 'De wijzigingen zijn nog niet gepubliceerd.'}"
+				  styleName="{(cvXml.@published == 'true') ? 'published' : 'unpublished'}"/>
+		<mx:Button label="Publiceren" enabled="{cvXml != null}" click="publish()" />
+	</mx:HBox>
+</mx:VBox>

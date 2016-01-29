@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:HBox xmlns:fx="http://ns.adobe.com/mxml/2009"
+		 xmlns:mx="library://ns.adobe.com/flex/mx"
+		 xmlns:sp="library://ns.adobe.com/flex/spark"
+		 xmlns:gui="nl.bransom.gui.*"
+		 enabled="{cvXml != null}"
+		 creationComplete="init()">
+	
+	<fx:Script>
+		<![CDATA[
+			import mx.binding.utils.BindingUtils;
+			
+			import nl.bransom.XmlUtils;
+			import nl.bransom.rest.RestClient;
+			
+			[Bindable] public var restClient:RestClient;
+			[Bindable] public var cvXml:XML;
+			[Bindable] public var objectName:String;
+			
+			[Bindable] private var profielXmlNL:XML;
+			[Bindable] private var profielXmlUK:XML;
+			
+			private function init():void {
+				BindingUtils.bindSetter(setCvXml, this, "cvXml");
+			}
+			private function setCvXml(cvXml:XML):void {
+				profielXmlNL = null;
+				profielXmlUK = null;
+				if (cvXml == null) {
+					return;
+				}
+				for each (var profielXml:XML in XmlUtils.getElements(cvXml, objectName)) {
+					var locale:String = XmlUtils.getTextContent(profielXml, "locale");
+					if (locale.toUpperCase().indexOf("NL") >= 0) {
+						profielXmlNL = profielXml;
+					} else if (locale.toUpperCase().indexOf("UK") >= 0) {
+						profielXmlUK = profielXml;
+					}
+				}
+				// Create a new nodes if required.
+				if (profielXmlNL == null) {
+					profielXmlNL = restClient.createEntityNode(cvXml, "profiel");
+					restClient.setTextContent(profielXmlNL, "locale", "nl_NL");
+				}
+				if (profielXmlUK == null) {
+					profielXmlUK = restClient.createEntityNode(cvXml, "profiel");
+					restClient.setTextContent(profielXmlUK, "locale", "uk_UK");
+				}
+			}
+		]]>
+	</fx:Script>
+	
+	<mx:VBox horizontalAlign="right" verticalAlign="top" height="100%">
+		<mx:Label text="" height="{taalLabelGUI.height}" />
+		<mx:Label text="Profiel" height="{profielGUI.height}" />
+		<mx:Label text="Persoonlijke eigenschappen" height="{pers_eig_GUI.height}" />
+		<mx:Label text="Vaardigheden" height="{vaardighedenGUI.height}" />
+	</mx:VBox>
+	<mx:HDividedBox width="100%" height="100%">
+		<mx:VBox width="100%" height="100%">
+			<mx:Label text="Nederlands" styleName="heading-label" id="taalLabelGUI" />
+			<gui:XmlTextArea restClient="{restClient}" objectXml="{profielXmlNL}"
+							 propertyName="profiel" width="100%" height="33%" id="profielGUI" />
+			<gui:XmlTextArea restClient="{restClient}" objectXml="{profielXmlNL}"
+							 propertyName="persoonlijke_eigenschappen" width="100%" height="33%" id="pers_eig_GUI" />
+			<gui:XmlTextArea restClient="{restClient}" objectXml="{profielXmlNL}"
+							 propertyName="vaardigheden" width="100%" height="33%" id="vaardighedenGUI" />
+		</mx:VBox>
+		<mx:VBox width="100%" height="100%">
+			<mx:Label text="English" styleName="heading-label" />
+			<gui:XmlTextArea restClient="{restClient}" objectXml="{profielXmlUK}"
+							 propertyName="profiel" width="100%" height="33%" />
+			<gui:XmlTextArea restClient="{restClient}" objectXml="{profielXmlUK}"
+							 propertyName="persoonlijke_eigenschappen" width="100%" height="33%" />
+			<gui:XmlTextArea restClient="{restClient}" objectXml="{profielXmlUK}"
+							 propertyName="vaardigheden" width="100%" height="33%" />
+		</mx:VBox>
+	</mx:HDividedBox>
+</mx:HBox>

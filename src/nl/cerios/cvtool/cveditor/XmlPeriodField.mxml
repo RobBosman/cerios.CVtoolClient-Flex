@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:TextInput xmlns:fx="http://ns.adobe.com/mxml/2009"
+			  xmlns:mx="library://ns.adobe.com/flex/mx"
+			  enabled="{objectXml != null}"
+			  maxChars="7"
+			  text="{xmlToDateText(objectXml, propertyName)}"
+			  focusIn="focusIn()"
+			  focusOut="focusOut()"
+			  change="changeHandler()"
+			  styleName="{getStyleName(text, emptyText, emptyStyle, errorString, errorStyle)}"
+			  creationComplete="init()">
+	<fx:Script>
+		<![CDATA[
+			import mx.formatters.DateFormatter;
+			
+			import nl.bransom.XmlUtils;
+			import nl.bransom.rest.RestClient;
+			
+			private static const DATE_FORMAT:String = "YYYY-MM-DD";
+			private static const DATE_FORMATTER:DateFormatter = new DateFormatter();
+
+			[Bindable] public var restClient:RestClient;
+			[Bindable] public var objectXml:XML;
+			[Bindable] public var propertyName:String;
+			[Bindable] public var emptyText:String = "";
+			[Bindable] public var emptyStyle:String = "";
+			[Bindable] public var errorStyle:String = "";
+			
+			private function init():void {
+				DATE_FORMATTER.formatString = DATE_FORMAT;
+			}
+				
+			private function xmlToDateText(objectXml:XML, propertyName:String):String {
+				var xmlString:String = XmlUtils.getTextContent(objectXml, propertyName);
+				// Convert 'YYYY-MM-01' to a Date object.
+				var parts:Array = xmlString.split('-');
+				if (parts.length == 3) {
+					return parts[1] + "-" + parts[0];
+				} else {
+					styleName = emptyStyle;
+					return emptyText;
+				}
+			}
+			
+			private function focusIn():void {
+				if ((emptyText != "") && (text == emptyText)) {
+					text = "";
+				}
+			}
+			
+			private function focusOut():void {
+				if ((emptyText != "") && (text == "")) {
+					text = emptyText;
+				}
+			}
+			
+			private function changeHandler():void {
+				var dateString:String = null;
+				// Convert the dateString from 'MM-YYYY' to 'YYYY-MM-01'.
+				if ((text.length == 7) && (text.charAt(2) == '-')) {
+					var parts:Array = text.split('-');
+					if (parts.length == 2) {
+						var date:Date = new Date(Number(parts[1]), Number(parts[0]) - 1, 1);
+						dateString = DATE_FORMATTER.format(date);
+					}
+				}
+				restClient.setTextContent(objectXml, propertyName, dateString);
+			}
+			
+			private function getStyleName(text:String, emptyText:String, emptyStyle:String, errorString:String,
+													   errorStyle:String):String {
+				if ((errorString != null) && (errorString != "")) {
+					return errorStyle;
+				} else if ((emptyText != "") && ((text == emptyText) || (text == ""))) {
+					return emptyStyle;
+				} else {
+					return "";
+				}
+			}
+		]]>
+	</fx:Script>
+</mx:TextInput>

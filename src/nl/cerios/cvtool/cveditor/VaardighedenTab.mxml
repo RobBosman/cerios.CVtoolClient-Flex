@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:VBox xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx"
+		 xmlns:gui="nl.bransom.gui.*"
+		 enabled="{parentXml != null}"
+		 creationComplete="init()">
+	
+	<fx:Script>
+		<![CDATA[
+			import mx.binding.utils.BindingUtils;
+			import mx.collections.ArrayCollection;
+			import mx.collections.Sort;
+			import mx.events.DataGridEvent;
+			
+			import nl.bransom.XmlUtils;
+			import nl.bransom.rest.RestClient;
+			
+			[Bindable] public var restClient:RestClient;
+			[Bindable] public var parentXml:XML;
+			[Bindable] public var objectName:String;
+			
+			public static const DATAGRID_FIELD_NAMES:ArrayCollection = new ArrayCollection(["",
+				"categorie", "omschrijving", "kennisniveau"]);
+			public static const OPTIONS_CATEGORIE:Array = [
+				{label:'Methoden en technieken', data:'Methoden en technieken'},
+				{label:'Programmeertalen', data:'Programmeertalen'},
+				{label:'Hardware', data:'Hardware'},
+				{label:'Software', data:'Software'},
+				{label:'Operating systems', data:'Operating systems'},
+				{label:'Databases', data:'Databases'},
+				{label:'Netwerken', data:'Netwerken'},
+				{label:'Tools', data:'Tools'}
+			];
+			public static const OPTIONS_NIVEAU:Array = [
+				{label:"■ ■ ■ ■ ■", data:5},
+				{label:"■ ■ ■ ■", data:4},
+				{label:"■ ■ ■", data:3},
+				{label:"■ ■", data:2},
+				{label:"■", data:1}
+			];
+			[Bindable] public static var _restClient:RestClient;
+			
+			private function init():void {
+				BindingUtils.bindSetter(setRestClient, this, "restClient");
+				BindingUtils.bindSetter(refreshXmlList, this, "parentXml");
+				BindingUtils.bindSetter(refreshXmlList, this, "objectName");
+			}
+			private function setRestClient(restClient:RestClient):void {
+				_restClient = restClient;
+			}
+			
+			private function createItem(event:Event = null):void {
+				var createdXml:XML = restClient.createEntityNode(parentXml, objectName, 0);
+				refreshXmlList();
+				dataGrid.selectedItem = createdXml;
+				dataGrid.scrollToIndex(dataGrid.selectedIndex);
+			}
+			
+			private function deleteItem(xmlToBeDeleted:XML):void {
+				restClient.deleteEntityNode(xmlToBeDeleted);
+				refreshXmlList();
+			}
+			
+			private function refreshXmlList(dummy:Object = null):void {
+				var xmlList:XMLList = XmlUtils.getElements(parentXml, objectName);
+				xmlList = XmlUtils.multiSortXmlList(xmlList, ["categorie", "omschrijving"],
+					[Array.CASEINSENSITIVE, Array.CASEINSENSITIVE]);
+				dataGrid.setXmlData(xmlList);
+			}
+			
+			private function compareCategorie(a:Object, b:Object, sortFields:Array = null):int {
+				return XmlUtils.compareComboOptions(OPTIONS_CATEGORIE, a, b, "categorie");
+			}
+		]]>
+	</fx:Script>
+	
+	<fx:Declarations>
+		<fx:Component id="cmpCategorie">
+			<gui:XmlComboBox restClient="{VaardighedenTab._restClient}" objectXml="{data as XML}"
+							 propertyName="{VaardighedenTab.DATAGRID_FIELD_NAMES.getItemAt(1)}"
+							 itemArray="{VaardighedenTab.OPTIONS_CATEGORIE}" />
+		</fx:Component>
+		<fx:Component id="cmpOmschrijving">
+			<gui:XmlTextInput restClient="{VaardighedenTab._restClient}" objectXml="{data as XML}"
+							  propertyName="{VaardighedenTab.DATAGRID_FIELD_NAMES.getItemAt(2)}" />
+		</fx:Component>
+		<fx:Component id="cmpKennisniveau">
+			<gui:XmlComboBox restClient="{VaardighedenTab._restClient}" objectXml="{data as XML}"
+							 propertyName="{VaardighedenTab.DATAGRID_FIELD_NAMES.getItemAt(3)}"
+							 itemArray="{VaardighedenTab.OPTIONS_NIVEAU}" />
+		</fx:Component>
+	</fx:Declarations>
+	
+	<mx:HBox>
+		<mx:Button label="Toevoegen" icon="{CVtool.ICON_CREATE}" enabled="{parentXml != null}" click="createItem()" />
+		<mx:Button label="Verwijderen" icon="{CVtool.ICON_DELETE}" enabled="{dataGrid.selectedItem != null}"
+				   click="deleteItem(dataGrid.selectedItem as XML)" />
+	</mx:HBox>
+	<gui:XmlDataGrid id="dataGrid" fieldNames="{DATAGRID_FIELD_NAMES}" height="100%">
+		<gui:columns>
+			<mx:DataGridColumn width="20" sortable="false" />
+			<mx:DataGridColumn headerText="Categorie" itemRenderer="{cmpCategorie}" rendererIsEditor="true"
+							   sortCompareFunction="compareCategorie" width="230" />
+			<mx:DataGridColumn headerText="Omschrijving" itemRenderer="{cmpOmschrijving}" rendererIsEditor="true"
+							   width="230" />
+			<mx:DataGridColumn headerText="Kennisniveau" itemRenderer="{cmpKennisniveau}" rendererIsEditor="true"
+							   width="120" />
+		</gui:columns>
+	</gui:XmlDataGrid>
+</mx:VBox>

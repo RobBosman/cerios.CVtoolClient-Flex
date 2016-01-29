@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:TabNavigator xmlns:mx="library://ns.adobe.com/flex/mx"
+				 xmlns:fx="http://ns.adobe.com/mxml/2009"
+				 xmlns:cvtool="nl.cerios.cvtool.*"
+				 xmlns:cvadmin="nl.cerios.cvtool.cvadmin.*"
+				 enabled="{signedInAccountXml != null}"
+				 creationComplete="init()">
+	
+	<fx:Script>
+		<![CDATA[
+			import mx.binding.utils.BindingUtils;
+			
+			import nl.bransom.PersistencyStatus;
+			import nl.bransom.XmlUtils;
+			import nl.bransom.rest.RestClient;
+			
+			[Bindable] public var restClient:RestClient;
+			[Bindable] public var signedInAccountXml:XML;
+			[Bindable] public var setOfRolXml:XML;
+			[Bindable] public var setOfBusinessunitXml:XML;
+			[Bindable] public var setOfAccountXml:XML;
+
+			private function init():void {
+				BindingUtils.bindSetter(setSignedInAccountXml, this, "signedInAccountXml");
+				BindingUtils.bindSetter(setSetOfBusinessunitXml, this, "setOfBusinessunitXml");
+			}
+
+			private function setSignedInAccountXml(xml:XML):void {
+				setOfRolXml = null;
+				setOfBusinessunitXml = null;
+				setOfAccountXml = null;
+				if (signedInAccountXml == null) {
+					return;
+				}
+				restClient.read("ROLES", "rol", {"$scope":"P"}, setSetOfRolXml);
+				restClient.read("BUSINESS_UNITS", "businessunit", {"$scope":"P"}, setSetOfBusinessunitXml);
+				restClient.read("ACCOUNTS", "_account", {"$scope":"Pca"}, setSetOfAccountXml);
+			}
+			private function setSetOfRolXml(xml:XML):void {
+				setOfRolXml = xml;
+				// 'Touch' the set of accounts to make them aware of the new set of roles.
+				setSetOfAccountXml(setOfAccountXml);
+			}
+			private function setSetOfBusinessunitXml(xml:XML):void {
+				setOfBusinessunitXml = xml;
+				// 'Touch' the set of accounts to make them aware of the new set of businessunits.
+				setSetOfAccountXml(setOfAccountXml);
+			}
+			private function setSetOfAccountXml(xml:XML):void {
+				setOfAccountXml = null;
+				// Don't show the _admin account.
+				var accountXmlList:XMLList = XmlUtils.getElements(xml, "_account");
+				for (var i:uint = 0; i < accountXmlList.length(); i++) {
+					if (XmlUtils.getTextContent(accountXmlList[i], "name") == "_admin") {
+						delete accountXmlList[i];
+						break;
+					}
+				}
+				setOfAccountXml = xml;
+			}
+			
+			private function getInfoHtml(signedInAccountXml:XML):String {
+				const listItem:String = "\n&nbsp;&nbsp;&nbsp;&nbsp;▪ ";
+				const listLine:String = "\n&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
+				return "Welkom " + XmlUtils.getTextContent(signedInAccountXml, "name").replace(/\..*/g, '')
+					+ "!\n\nDit is versie <b>" + CVtool.APP_VERSION + "</b> van de <b>CERIOS CVtool</b>, waarmee je je curriculum vitae zowel in het Nederlands als in het Engels kunt invoeren."
+					+ "\nAls je dit leest ben je een 'manager' en kun je tevens de accounts beheren en ieders CV opvragen."
+					+ "\nLet even op het volgende:\n"
+					+ listItem + "<i>Aanmelden als  ...</i>: aanmelden als iemand anders."
+					+ listLine + "Dit kan van pas komen om bijvoorbeeld een typo in andermans cv te corrigeren."
+					+ listItem + "<i>AutoSave</i>: al je wijzigingen worden na 2 seconden vanzelf opgeslagen."
+					+ listLine + "Als je niet van plan bent iets te wijzigen, zet 'AutoSave' dan uit met de knop rechtsonder."
+					+ listItem + "<i>Sorteren</i>: gegevens in tabellen kun je sorteren door op de kolomheader te klikken."
+					+ "\n\nIk heb geprobeerd alles zo gebruiksvriendelijk mogelijk te maken, maar elke tip en (positieve ;-) kritiek is welkom."
+					+ "\nProblemen? Een bug ontdekt? Stuur even een mailtje naar "
+					+ "<a href='mailto:rob.bosman@cerios.nl?subject=CVtool'><u>rob.bosman@cerios.nl</u></a>."
+					+ "\n\nGroet,\nRob";
+			}
+
+		]]>
+	</fx:Script>
+	
+	<mx:Canvas label="Info" width="100%" height="100%">
+		<mx:TextArea id="infoLabel" htmlText="{getInfoHtml(signedInAccountXml)}" editable="false" styleName="info"
+					 width="100%" height="100%" />
+	</mx:Canvas>
+	<cvadmin:BusinessunitsTab id="businessunitsTab" label="Business Units" restClient="{restClient}" cvAdminTab="{this}"
+							  width="100%" height="100%" />
+	<cvadmin:AccountsTab id="accountsTab" label="Accounts" restClient="{restClient}" cvAdminTab="{this}"
+						 width="100%" height="100%" />
+	<cvadmin:CvListTab id="cvListTab" label="Alle CVs" restClient="{restClient}" cvAdminTab="{this}"
+					   width="100%" height="100%" />
+	<cvtool:CvEditorTabs label="Eigen CV" id="cvEditorTab" restClient="{restClient}"
+						signedInAccountXml="{signedInAccountXml}" width="100%" height="100%" />
+</mx:TabNavigator>
