@@ -27,10 +27,5 @@
 			<type>2</type>
 			<location>C:/Progs/Wamp/www/cvtool/_RELEASE</location>
 		</link>
-		<link>
-			<name>bin-release1</name>
-			<type>2</type>
-			<location>C:/Progs/Wamp/www/cvtool/RELEASE</location>
-		</link>
 	</linkedResources>
 </projectDescription>

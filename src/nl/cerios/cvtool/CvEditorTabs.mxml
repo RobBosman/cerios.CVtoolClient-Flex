@@ -175,11 +175,13 @@
 		<cveditor:OpleidingTab label="Opleiding" restClient="{restClient}" parentXml="{cvXml}"
 							 objectName="opleiding" />
 		<cveditor:TalenkennisTab label="Talen" restClient="{restClient}" parentXml="{cvXml}"
-							   objectName="talenkennis" />
+								 objectName="talenkennis" />
 		<cveditor:BranchekennisTab label="Branche" restClient="{restClient}" parentXml="{cvXml}"
 								objectName="branchekennis" />
 		<cveditor:VaardighedenTab label="Vaardigheden" restClient="{restClient}" parentXml="{cvXml}"
 								objectName="vaardigheid" />
+		<cveditor:PublicatiesTab label="Publicaties" restClient="{restClient}" parentXml="{cvXml}"
+								 objectName="publicatie" />
 		<cveditor:WerkopdrachtenTab label="Werkervaring" restClient="{restClient}" parentXml="{cvXml}"
 								  objectName="werkopdracht" />
 	</mx:TabNavigator>

@@ -213,18 +213,25 @@
 		<mx:Button label="Verwijderen" icon="{CVtool.ICON_DELETE}" enabled="{dataGrid.selectedItem != null}"
 				   click="deleteItem(dataGrid.selectedItem as XML)" />
 	</mx:HBox>
-	<gui:XmlDataGrid id="dataGrid" fieldNames="{DATAGRID_FIELD_NAMES}" height="100%">
-		<gui:columns>
-			<mx:DataGridColumn width="20" sortable="false" />
-			<mx:DataGridColumn headerText="Naam" itemRenderer="{cmpName}" rendererIsEditor="true" width="230" />
-			<mx:DataGridColumn headerText="Business unit" itemRenderer="{cmpBusinessunit}" rendererIsEditor="true"
-							   sortCompareFunction="compareBusinessunit" width="115" />
-			<mx:DataGridColumn headerText="Rol '{CVtool.ROL_EDIT_EIGEN_CV}'" itemRenderer="{cmpRolEditEigenCV}"
-							   rendererIsEditor="true" resizable="false" sortCompareFunction="compareRolEditEigenCV"
-							   width="145" />
-			<mx:DataGridColumn headerText="Rol '{CVtool.ROL_VIEW_ALLE_CVS}'" itemRenderer="{cmpRolViewAlleCVs}"
-							   rendererIsEditor="true" resizable="false" sortCompareFunction="compareRolViewAlleCVs"
-							   width="145" />
-		</gui:columns>
-	</gui:XmlDataGrid>
+	<mx:HBox height="100%">
+		<gui:XmlDataGrid id="dataGrid" fieldNames="{DATAGRID_FIELD_NAMES}" height="100%">
+			<gui:columns>
+				<mx:DataGridColumn width="20" sortable="false" />
+				<mx:DataGridColumn headerText="Naam" itemRenderer="{cmpName}" rendererIsEditor="true" width="230" />
+				<mx:DataGridColumn headerText="Business unit" itemRenderer="{cmpBusinessunit}" rendererIsEditor="true"
+								   sortCompareFunction="compareBusinessunit" width="115" />
+				<mx:DataGridColumn headerText="Rol '{CVtool.ROL_EDIT_EIGEN_CV}'" itemRenderer="{cmpRolEditEigenCV}"
+								   rendererIsEditor="true" resizable="false" sortCompareFunction="compareRolEditEigenCV"
+								   width="145" />
+				<mx:DataGridColumn headerText="Rol '{CVtool.ROL_VIEW_ALLE_CVS}'" itemRenderer="{cmpRolViewAlleCVs}"
+								   rendererIsEditor="true" resizable="false" sortCompareFunction="compareRolViewAlleCVs"
+								   width="145" />
+			</gui:columns>
+		</gui:XmlDataGrid>
+		<mx:VBox height="100%">
+			<mx:Spacer height="100%" />
+			<mx:Button label="Aanmelden als  {CvListTab.getRunAsName(dataGrid.selectedItem as XML)}" enabled="{dataGrid.selectedItem != null}"
+					   click="restClient.signInAs((dataGrid.selectedItem as XML).@id)" />
+		</mx:VBox>
+	</mx:HBox>
 </mx:VBox>
