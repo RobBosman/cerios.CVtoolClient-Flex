@@ -186,12 +186,9 @@
 								  objectName="werkopdracht" />
 	</mx:TabNavigator>
 	<mx:HBox width="100%" verticalAlign="middle">
-		<mx:Button label="Preview" icon="{CVtool.ICON_FLAG_NL}" labelPlacement="left"
+		<mx:Button label="Preview" icon="{CVtool.selectedLocaleInfo.icon}" labelPlacement="left"
 				   enabled="{signedInAccountXml != null}"
-				   click="previewCv(restClient, signedInAccountXml.@id, 'nl_NL', 'Cerios', true)" />
-		<mx:Button label="Preview" icon="{CVtool.ICON_FLAG_UK}"  labelPlacement="left"
-				   enabled="{signedInAccountXml != null}"
-				   click="previewCv(restClient, signedInAccountXml.@id, 'uk_UK', 'Cerios', true)" />
+				   click="previewCv(restClient, signedInAccountXml.@id, CVtool.selectedLocaleInfo.locale, 'Cerios', true)" />
 		<mx:Spacer width="100%" />
 		<mx:Label text="{(cvXml.@published == 'true') ? 'Deze gegevens zijn gepubliceerd.'
 				  									  : 'De wijzigingen zijn nog niet gepubliceerd.'}"

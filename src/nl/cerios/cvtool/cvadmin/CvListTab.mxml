@@ -87,7 +87,7 @@
 			}
 			
 			private function downloadCv(accountId:String):void {
-				var locale:String = localeBG.selectedValue as String;
+				var locale:String = CVtool.selectedLocaleInfo.locale;
 				var layout:String = layoutBG.selectedValue as String;
 				CvEditorTabs.previewCv(restClient, accountId, locale, layout, false);
 			}
@@ -114,26 +114,14 @@
 	<mx:VBox height="100%">
 		<mx:HBox id="cvStyleButtons">
 			<mx:VBox>
-				<mx:RadioButtonGroup id="localeBG" />
-				<mx:Label text="Taal" styleName="heading-label" />
-				<mx:HBox verticalAlign="middle">
-					<mx:RadioButton groupName="localeBG" label="Nederlands" value="nl_NL" selected="true" />
-					<mx:RadioButton icon="{CVtool.ICON_FLAG_NL}" />
-				</mx:HBox>
-				<mx:HBox verticalAlign="middle">
-					<mx:RadioButton groupName="localeBG" label="Engels" value="uk_UK" />
-					<mx:RadioButton icon="{CVtool.ICON_FLAG_UK}" />
-				</mx:HBox>
-			</mx:VBox>
-			<mx:VRule height="{cvStyleButtons.height}" />
-			<mx:VBox>
 				<mx:RadioButtonGroup id="layoutBG" />
 				<mx:Label text="Opmaak" styleName="heading-label" />
 				<mx:RadioButton groupName="layoutBG" label="Cerios" value="Cerios" selected="true" />
 				<mx:RadioButton groupName="layoutBG" label="geen" value="" />
 			</mx:VBox>
 			<mx:VRule height="{cvStyleButtons.height}" />
-			<mx:Button label="Download" enabled="{dataGrid.selectedItem != null}"
+			<mx:Button label="Download" icon="{CVtool.selectedLocaleInfo.icon}" labelPlacement="left"
+					   enabled="{dataGrid.selectedItem != null}"
 					   click="downloadCv((dataGrid.selectedItem as XML).@id)" />
 		</mx:HBox>
 		<mx:Spacer height="100%" />

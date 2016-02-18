@@ -32,17 +32,24 @@
 			[Embed(source="/assets/icon_flag_UK.png")] public static const ICON_FLAG_UK:Class;
 			
 			public static const APP_TITLE:String = "Cerios CVtool";
-			public static const APP_VERSION:String = "v20160214";
+			public static const APP_VERSION:String = "v20160218";
 			public static const ROL_EDIT_EIGEN_CV:String = "edit eigen CV";
 			public static const ROL_VIEW_ALLE_CVS:String = "view alle CVs";
 			public static const REST_APP:String = "cv";
 			private static const AUTH_URL:String = "/cvtool/cvtool.php";
 			private static const REST_BASE_URL:String = "/bransom/REST/";
 			
+			public static const LOCALE_INFO:Array = [
+				{label:'Nederlands', locale:'nl_NL', icon:ICON_FLAG_NL},
+				{label:'Engels', locale:'uk_UK', icon:ICON_FLAG_UK}
+			];
+			
+			[Bindable] public static var selectedLocaleInfo:Object;
 			[Bindable] private var restClient:RestClient;
 			[Bindable] private var signedInAccountXml:XML;
 			
 			private function init():void {
+				selectedLocaleInfo = LOCALE_INFO[0];
 				restClient = new RestClient(REST_BASE_URL, REST_APP, AUTH_URL);
 				BindingUtils.bindSetter(setSignedInAccountId, restClient, "signedInAccountId");
 				
@@ -172,16 +179,23 @@
 					<mx:Image source="{CERIOS_BANNER}" />
 					<mx:Label text="CVtool" styleName="title" height="100%" />
 				</mx:HBox>
-				<mx:HBox id="signedInStuff" includeIn="SIGNED_IN_ADMIN,SIGNED_IN_STAFF"
-						 verticalAlign="middle" width="100%">
-					<mx:Label text="{APP_VERSION}" styleName="version" top="0" />
-					<mx:Spacer width="100%" />
-					<mx:Label htmlText="" /><!-- dummy label to prevent the next label from mysteriously disappearing... -->
-					<mx:Label htmlText="aangemeld als &#x3C;b&#x3E;{
-							  XmlUtils.getTextContent(signedInAccountXml, 'name').replace(/\./g, ' ')
-							  }&#x3C;/b&#x3E;" verticalCenter="0" />
-					<mx:Button label="Afmelden" click="signOut()" verticalCenter="0" />
-				</mx:HBox>
+				<mx:VBox width="100%" height="100%" includeIn="SIGNED_IN_ADMIN,SIGNED_IN_STAFF">
+					<mx:HBox id="signedInStuff" verticalAlign="middle" width="100%">
+						<mx:Label text="{APP_VERSION}" styleName="version" top="0" />
+						<mx:Spacer width="100%" />
+						<mx:Label htmlText="" /><!-- dummy label to prevent the next label from mysteriously disappearing... -->
+						<mx:Label htmlText="aangemeld als &#x3C;b&#x3E;{
+								  XmlUtils.getTextContent(signedInAccountXml, 'name').replace(/\./g, ' ')
+								  }&#x3C;/b&#x3E;" verticalCenter="0" />
+						<mx:Button label="Afmelden" click="signOut()" verticalCenter="0" />
+					</mx:HBox>
+					<mx:HBox id="language" width="100%" horizontalAlign="right" verticalAlign="middle" >
+						<mx:Label text="taalkeuze" />
+						<mx:ComboBox id="localeCombo" dataProvider="{CVtool.LOCALE_INFO}" 
+									 selectedItem="{CVtool.selectedLocaleInfo}"
+									 change="CVtool.selectedLocaleInfo = localeCombo.selectedItem" />
+					</mx:HBox>
+				</mx:VBox>
 			</mx:HBox>
 			
 			<mx:VBox id="signInTab" includeIn="SIGNED_OUT" horizontalAlign="center" horizontalCenter="0" width="100%">

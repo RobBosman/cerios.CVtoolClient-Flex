@@ -197,7 +197,6 @@
 	
 	<mx:HBox width="35%" height="100%">
 		<mx:VBox horizontalAlign="right" verticalAlign="top" height="100%">
-			<mx:Label text="" height="{taalLabelGUI.height}" />
 			<mx:Label text="Rol" height="{rolGUI.height}" />
 			<mx:Text text="Opdracht- formulering" height="{opdrachtformuleringGUI.height}"
 					 textAlign="right" width="78" />
@@ -207,35 +206,18 @@
 					 textAlign="right" width="78" />
 		</mx:VBox>
 		<mx:VBox width="100%" height="100%">
-			<mx:Label text="Nederlands" styleName="heading-label" id="taalLabelGUI" />
-			<gui:XmlTextInput restClient="{restClient}" objectXml="{getWerkervaringXml(dataGrid.selectedItem, 'nl_NL')}"
+			<gui:XmlTextInput restClient="{restClient}" objectXml="{getWerkervaringXml(dataGrid.selectedItem, CVtool.selectedLocaleInfo.locale)}"
 							  propertyName="rol" width="100%"
 							  backgroundAlpha="{dataGrid.selectedIndex == -1 ? 0.0 : 1.0}" id="rolGUI" />
-			<gui:XmlTextArea restClient="{restClient}" objectXml="{getWerkervaringXml(dataGrid.selectedItem, 'nl_NL')}"
+			<gui:XmlTextArea restClient="{restClient}" objectXml="{getWerkervaringXml(dataGrid.selectedItem, CVtool.selectedLocaleInfo.locale)}"
 							 propertyName="opdrachtformulering" width="100%" height="45%"
 							 backgroundAlpha="{dataGrid.selectedIndex == -1 ? 0.0 : 1.0}" id="opdrachtformuleringGUI" />
-			<gui:XmlTextArea restClient="{restClient}" objectXml="{getWerkervaringXml(dataGrid.selectedItem, 'nl_NL')}"
+			<gui:XmlTextArea restClient="{restClient}" objectXml="{getWerkervaringXml(dataGrid.selectedItem, CVtool.selectedLocaleInfo.locale)}"
 							 propertyName="werkzaamheden" width="100%" height="45%"
 							 backgroundAlpha="{dataGrid.selectedIndex == -1 ? 0.0 : 1.0}" id="werkzaamhedenGUI" />
-			<gui:XmlTextArea restClient="{restClient}" objectXml="{getWerkervaringXml(dataGrid.selectedItem, 'nl_NL')}"
+			<gui:XmlTextArea restClient="{restClient}" objectXml="{getWerkervaringXml(dataGrid.selectedItem, CVtool.selectedLocaleInfo.locale)}"
 							 propertyName="steekwoorden" width="100%" height="10%"
 							 backgroundAlpha="{dataGrid.selectedIndex == -1 ? 0.0 : 1.0}" id="steekwoordenGUI" />
 		</mx:VBox>
 	</mx:HBox>
-
-	<mx:VBox backgroundAlpha="{dataGrid.selectedIndex == -1 ? 0.0 : 1.0}" width="15%" height="100%">
-		<mx:Label text="English" styleName="heading-label" />
-		<gui:XmlTextInput restClient="{restClient}" objectXml="{getWerkervaringXml(dataGrid.selectedItem, 'uk_UK')}"
-						  propertyName="rol" width="100%"
-						  backgroundAlpha="{dataGrid.selectedIndex == -1 ? 0.0 : 1.0}" />
-		<gui:XmlTextArea restClient="{restClient}" objectXml="{getWerkervaringXml(dataGrid.selectedItem, 'uk_UK')}"
-						 propertyName="opdrachtformulering" width="100%" height="45%"
-						 backgroundAlpha="{dataGrid.selectedIndex == -1 ? 0.0 : 1.0}" />
-		<gui:XmlTextArea restClient="{restClient}" objectXml="{getWerkervaringXml(dataGrid.selectedItem, 'uk_UK')}"
-						 propertyName="werkzaamheden" width="100%" height="45%"
-						 backgroundAlpha="{dataGrid.selectedIndex == -1 ? 0.0 : 1.0}" />
-		<gui:XmlTextArea restClient="{restClient}" objectXml="{getWerkervaringXml(dataGrid.selectedItem, 'uk_UK')}"
-						 propertyName="steekwoorden" width="100%" height="10%"
-						 backgroundAlpha="{dataGrid.selectedIndex == -1 ? 0.0 : 1.0}" />
-	</mx:VBox>
 </mx:HDividedBox>

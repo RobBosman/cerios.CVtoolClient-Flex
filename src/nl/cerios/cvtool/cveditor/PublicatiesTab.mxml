@@ -67,7 +67,7 @@
 		</fx:Component>
 		<fx:Component id="cmpOmschrijving">
 			<gui:XmlTextInput restClient="{PublicatiesTab._restClient}" objectXml="{data as XML}"
-							  propertyName="{PublicatiesTab.DATAGRID_FIELD_NAMES.getItemAt(4)}" />
+							  propertyName="{PublicatiesTab.DATAGRID_FIELD_NAMES.getItemAt(4) + '_' + CVtool.selectedLocaleInfo.locale}" />
 		</fx:Component>
 	</fx:Declarations>
 	
