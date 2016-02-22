@@ -1,4 +1,2 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<flexProperties enableServiceManager="false" flexServerFeatures="0" flexServerType="16" serverContextRoot="" serverRoot="C:/Progs/Wamp/www/cvtool/" serverRootURL="http://localhost:9080/cvtool" toolCompile="true" useServerFlexSDK="false" version="2"/>
-
-
+<flexProperties enableServiceManager="false" flexServerFeatures="0" flexServerType="16" serverContextRoot="" serverRoot="C:/Progs/Wnmp/html/cvtool" serverRootURL="http://localhost:9080/cvtool/" toolCompile="true" useServerFlexSDK="false" version="2"/>

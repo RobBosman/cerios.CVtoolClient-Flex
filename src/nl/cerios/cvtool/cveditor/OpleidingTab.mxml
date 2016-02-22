@@ -28,8 +28,9 @@
 				{label:"nvt", data:2}
 			];
 			public static const OPTIONS_SOORT_OPLEIDING:Array = [
-				{label:"algemeen", data:0},
-				{label:"vaktechnisch", data:1}
+				{label:"opleiding", data:0},
+				{label:"training vaktechnisch", data:1},
+				{label:"training algemeen", data:2}
 			];
 			[Bindable] public static var _restClient:RestClient;
 			
@@ -114,7 +115,7 @@
 			<mx:DataGridColumn headerText="Plaats" itemRenderer="{cmpPlaats}" rendererIsEditor="true" />
 			<mx:DataGridColumn headerText="Opleiding" itemRenderer="{cmpOpleiding}" rendererIsEditor="true" />
 			<mx:DataGridColumn headerText="Soort opleiding" itemRenderer="{cmpSoortOpleiding}" rendererIsEditor="true"
-							   sortCompareFunction="compareSoortOpleiding" width="125" />
+							   sortCompareFunction="compareSoortOpleiding" width="175" />
 			<mx:DataGridColumn headerText="Vakken" itemRenderer="{cmpVakken}" rendererIsEditor="true" width="150" />
 			<mx:DataGridColumn headerText="Diploma" itemRenderer="{cmpDiploma}" rendererIsEditor="true"
 							   sortCompareFunction="compareDiploma" width="75" />
