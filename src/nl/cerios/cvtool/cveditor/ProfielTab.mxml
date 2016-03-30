@@ -3,13 +3,10 @@
 		 xmlns:mx="library://ns.adobe.com/flex/mx"
 		 xmlns:sp="library://ns.adobe.com/flex/spark"
 		 xmlns:gui="nl.bransom.gui.*"
-		 enabled="{cvXml != null}"
-		 creationComplete="init()">
+		 enabled="{cvXml != null}">
 	
 	<fx:Script>
 		<![CDATA[
-			import mx.binding.utils.BindingUtils;
-			
 			import nl.bransom.XmlUtils;
 			import nl.bransom.rest.RestClient;
 			
@@ -17,20 +14,16 @@
 			[Bindable] public var cvXml:XML;
 			[Bindable] public var objectName:String;
 			
-			private function init():void {
-				BindingUtils.bindSetter(setCvXml, this, "cvXml");
-			}
-			private function setCvXml(cvXml:XML):void {
-				if (cvXml == null) {
-					return;
-				}
-			}
-			
-			private function getProfielXml(localeInfo:Object):XML {
+			private function getProfielXml(cvXml:XML, localeInfo:Object):XML {
 				for each (var profielXml:XML in XmlUtils.getElements(cvXml, objectName)) {
 					if (XmlUtils.getTextContent(profielXml, "locale") == localeInfo.locale) {
 						return profielXml;
 					}
+				}
+				if (cvXml != null) {
+					var createdProfielXml:XML = restClient.createEntityNode(cvXml, objectName);
+					XmlUtils.setTextContent(createdProfielXml, "locale", localeInfo.locale);
+					return createdProfielXml;
 				}
 				return null;
 			}
@@ -43,11 +36,11 @@
 		<mx:Label text="Vaardigheden" height="{vaardighedenGUI.height}" />
 	</mx:VBox>
 	<mx:VBox width="100%" height="100%">
-		<gui:XmlTextArea restClient="{restClient}" objectXml="{getProfielXml(CVtool.selectedLocaleInfo)}"
+		<gui:XmlTextArea restClient="{restClient}" objectXml="{getProfielXml(cvXml, CVtool.selectedLocaleInfo)}"
 						 propertyName="profiel" width="100%" height="33%" id="profielGUI" />
-		<gui:XmlTextArea restClient="{restClient}" objectXml="{getProfielXml(CVtool.selectedLocaleInfo)}"
+		<gui:XmlTextArea restClient="{restClient}" objectXml="{getProfielXml(cvXml, CVtool.selectedLocaleInfo)}"
 						 propertyName="persoonlijke_eigenschappen" width="100%" height="33%" id="pers_eig_GUI" />
-		<gui:XmlTextArea restClient="{restClient}" objectXml="{getProfielXml(CVtool.selectedLocaleInfo)}"
+		<gui:XmlTextArea restClient="{restClient}" objectXml="{getProfielXml(cvXml, CVtool.selectedLocaleInfo)}"
 						 propertyName="vaardigheden" width="100%" height="33%" id="vaardighedenGUI" />
 	</mx:VBox>
 </mx:HBox>
