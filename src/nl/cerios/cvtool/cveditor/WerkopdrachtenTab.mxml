@@ -18,7 +18,7 @@
 			import nl.bransom.rest.RestClient;
 			
 			public static const DATAGRID_FIELD_NAMES:ArrayCollection = new ArrayCollection(["",
-				"opdrachtgever", "titel", "periode_begin", "periode_eind", "opnemen_in_cv"]);
+				"werkgever", "opdrachtgever", "titel", "periode_begin", "periode_eind", "opnemen_in_cv"]);
 			
 			[Bindable] public var restClient:RestClient;
 			[Bindable] public var parentXml:XML;
@@ -141,31 +141,35 @@
 	</fx:Script>
 	
 	<fx:Declarations>
-		<fx:Component id="cmpOpdrachtgever">
+		<fx:Component id="cmpWerkgever">
 			<gui:XmlTextInput restClient="{WerkopdrachtenTab._restClient}" objectXml="{data as XML}"
 							  propertyName="{WerkopdrachtenTab.DATAGRID_FIELD_NAMES.getItemAt(1)}" />
 		</fx:Component>
-		<fx:Component id="cmpTitel">
+		<fx:Component id="cmpOpdrachtgever">
 			<gui:XmlTextInput restClient="{WerkopdrachtenTab._restClient}" objectXml="{data as XML}"
 							  propertyName="{WerkopdrachtenTab.DATAGRID_FIELD_NAMES.getItemAt(2)}" />
 		</fx:Component>
+		<fx:Component id="cmpTitel">
+			<gui:XmlTextInput restClient="{WerkopdrachtenTab._restClient}" objectXml="{data as XML}"
+							  propertyName="{WerkopdrachtenTab.DATAGRID_FIELD_NAMES.getItemAt(3)}" />
+		</fx:Component>
 		<fx:Component id="cmpPeriodeBegin">
 			<cveditor:XmlPeriodField restClient="{WerkopdrachtenTab._restClient}" objectXml="{data as XML}"
-									 propertyName="{WerkopdrachtenTab.DATAGRID_FIELD_NAMES.getItemAt(3)}"
+									 propertyName="{WerkopdrachtenTab.DATAGRID_FIELD_NAMES.getItemAt(4)}"
 									 toolTip="vul het begin van de periode in (MM-JJJJ)"
 									 emptyText="MM-JJJJ" emptyStyle="error-text" errorStyle="error-text"
 									 errorString="{text.match(/[0-9]{2}\-[0-9]{4}/) ? null : 'datumformaat: MM-JJJJ'}" />
 		</fx:Component>
 		<fx:Component id="cmpPeriodeEind">
 			<cveditor:XmlPeriodField restClient="{WerkopdrachtenTab._restClient}" objectXml="{data as XML}"
-									 propertyName="{WerkopdrachtenTab.DATAGRID_FIELD_NAMES.getItemAt(4)}"
+									 propertyName="{WerkopdrachtenTab.DATAGRID_FIELD_NAMES.getItemAt(5)}"
 									 toolTip="vul het einde van de periode in (MM-JJJJ) of laat leeg voor 'heden'"
 									 emptyText="heden" emptyStyle="default-text" errorStyle="error-text"
 									 errorString="{((text == '') || (text == emptyText) || (text.match(/[0-9]{2}\-[0-9]{4}/))) ? null : 'datumformaat: MM-JJJJ of leeg (= \'heden\')'}" />
 		</fx:Component>
 		<fx:Component id="cmpOpnemenInCv">
 			<gui:XmlCheckBox restClient="{WerkopdrachtenTab._restClient}" objectXml="{data as XML}"
-							 propertyName="{WerkopdrachtenTab.DATAGRID_FIELD_NAMES.getItemAt(5)}" paddingLeft="10"
+							 propertyName="{WerkopdrachtenTab.DATAGRID_FIELD_NAMES.getItemAt(6)}" paddingLeft="10"
 							 toolTip="geef hier aan of deze werkervaring in het cv moet worden opgenomen" />
 		</fx:Component>
 	</fx:Declarations>
@@ -181,9 +185,11 @@
 						 sortableColumns="false" orderChangedFunction="updateItemSortIndices">
 			<gui:columns>
 				<mx:DataGridColumn width="20" resizable="false" sortable="false" />
+				<mx:DataGridColumn headerText="Werkgever" width="200"
+								   itemRenderer="{cmpWerkgever}" rendererIsEditor="true" />
 				<mx:DataGridColumn headerText="Opdrachtgever"
 								   itemRenderer="{cmpOpdrachtgever}" rendererIsEditor="true" />
-				<mx:DataGridColumn headerText="Titel" width="150"
+				<mx:DataGridColumn headerText="Titel" width="200"
 								   itemRenderer="{cmpTitel}" rendererIsEditor="true" />
 				<mx:DataGridColumn headerText="van" width="60" resizable="false"
 								   itemRenderer="{cmpPeriodeBegin}" rendererIsEditor="true" />
