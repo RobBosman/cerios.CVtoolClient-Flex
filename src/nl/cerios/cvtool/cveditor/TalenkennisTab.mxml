@@ -20,7 +20,7 @@
 			[Bindable] public var objectName:String;
 			
 			public static const DATAGRID_FIELD_NAMES:ArrayCollection = new ArrayCollection(["",
-				"taal", "mondeling", "schriftelijk"]);
+				"taal_NL", "taal_UK", "mondeling", "schriftelijk"]);
 			public static const OPTIONS_TALENKENNIS:Array = [
 				{label:'moedertaal', data:1},
 				{label:'vloeiend', data:2},
@@ -61,18 +61,22 @@
 	</fx:Script>
 	
 	<fx:Declarations>
-		<fx:Component id="cmpTaal">
+		<fx:Component id="cmpTaalNL">
 			<gui:XmlTextInput restClient="{TalenkennisTab._restClient}" objectXml="{data as XML}"
 							  propertyName="{TalenkennisTab.DATAGRID_FIELD_NAMES.getItemAt(1)}" />
 		</fx:Component>
+		<fx:Component id="cmpTaalUK">
+			<gui:XmlTextInput restClient="{TalenkennisTab._restClient}" objectXml="{data as XML}"
+							  propertyName="{TalenkennisTab.DATAGRID_FIELD_NAMES.getItemAt(2)}" />
+		</fx:Component>
 		<fx:Component id="cmpMondeling">
 			<gui:XmlComboBox restClient="{TalenkennisTab._restClient}" objectXml="{data as XML}"
-							 propertyName="{TalenkennisTab.DATAGRID_FIELD_NAMES.getItemAt(2)}"
+							 propertyName="{TalenkennisTab.DATAGRID_FIELD_NAMES.getItemAt(3)}"
 							 itemArray="{TalenkennisTab.OPTIONS_TALENKENNIS}" />
 		</fx:Component>
 		<fx:Component id="cmpSchriftelijk">
 			<gui:XmlComboBox restClient="{TalenkennisTab._restClient}" objectXml="{data as XML}"
-							 propertyName="{TalenkennisTab.DATAGRID_FIELD_NAMES.getItemAt(3)}"
+							 propertyName="{TalenkennisTab.DATAGRID_FIELD_NAMES.getItemAt(4)}"
 							 itemArray="{TalenkennisTab.OPTIONS_TALENKENNIS}" />
 		</fx:Component>
 	</fx:Declarations>
@@ -85,7 +89,9 @@
 	<gui:XmlDataGrid id="dataGrid" fieldNames="{DATAGRID_FIELD_NAMES}" height="100%">
 		<gui:columns>
 			<mx:DataGridColumn width="20" sortable="false" />
-			<mx:DataGridColumn headerText="Taal" itemRenderer="{cmpTaal}" rendererIsEditor="true"
+			<mx:DataGridColumn headerText="Taal (Nederlands)" itemRenderer="{cmpTaalNL}" rendererIsEditor="true"
+							   width="230" />
+			<mx:DataGridColumn headerText="Taal (English)" itemRenderer="{cmpTaalUK}" rendererIsEditor="true"
 							   width="230" />
 			<mx:DataGridColumn headerText="Mondeling" itemRenderer="{cmpMondeling}" rendererIsEditor="true"
 							   width="120" />
