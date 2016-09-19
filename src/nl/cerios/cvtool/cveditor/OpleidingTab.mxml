@@ -22,10 +22,11 @@
 			public static const DATAGRID_FIELD_NAMES:ArrayCollection = new ArrayCollection(["",
 				"naam_instituut", "plaats_instituut", "naam_opleiding", "soort_opleiding", "vakken", "diploma",
 				"jaar_diploma"]);
-			public static const OPTIONS_DIPLOMA:Array = [
+			public static const OPTIONS_VOLTOOID:Array = [
 				{label:"Nee", data:0},
-				{label:"Ja", data:1},
-				{label:"nvt", data:2}
+				{label:"Diploma", data:1},
+				{label:"Certificaat", data:2},
+				{label:"nvt", data:3}
 			];
 			public static const OPTIONS_SOORT_OPLEIDING:Array = [
 				{label:"opleiding", data:0},
@@ -64,8 +65,8 @@
 			private function compareSoortOpleiding(a:Object, b:Object, sortFields:Array = null):int {
 				return XmlUtils.compareComboOptions(OPTIONS_SOORT_OPLEIDING, a, b, "soort_opleiding");
 			}
-			private function compareDiploma(a:Object, b:Object, sortFields:Array = null):int {
-				return XmlUtils.compareComboOptions(OPTIONS_DIPLOMA, a, b, "diploma");
+			private function compareVoltooid(a:Object, b:Object, sortFields:Array = null):int {
+				return XmlUtils.compareComboOptions(OPTIONS_VOLTOOID, a, b, "diploma");
 			}
 		]]>
 	</fx:Script>
@@ -92,10 +93,10 @@
 			<gui:XmlTextArea restClient="{OpleidingTab._restClient}" objectXml="{data as XML}"
 							 propertyName="{OpleidingTab.DATAGRID_FIELD_NAMES.getItemAt(5)}" />
 		</fx:Component>
-		<fx:Component id="cmpDiploma">
+		<fx:Component id="cmpVoltooid">
 			<gui:XmlComboBox restClient="{OpleidingTab._restClient}" objectXml="{data as XML}"
 							 propertyName="{OpleidingTab.DATAGRID_FIELD_NAMES.getItemAt(6)}"
-							 itemArray="{OpleidingTab.OPTIONS_DIPLOMA}" />
+							 itemArray="{OpleidingTab.OPTIONS_VOLTOOID}" />
 		</fx:Component>
 		<fx:Component id="cmpJaarDiploma">
 			<gui:XmlTextInput restClient="{OpleidingTab._restClient}" objectXml="{data as XML}"
@@ -117,8 +118,8 @@
 			<mx:DataGridColumn headerText="Soort opleiding" itemRenderer="{cmpSoortOpleiding}" rendererIsEditor="true"
 							   sortCompareFunction="compareSoortOpleiding" width="175" />
 			<mx:DataGridColumn headerText="Vakken" itemRenderer="{cmpVakken}" rendererIsEditor="true" width="150" />
-			<mx:DataGridColumn headerText="Diploma" itemRenderer="{cmpDiploma}" rendererIsEditor="true"
-							   sortCompareFunction="compareDiploma" width="75" />
+			<mx:DataGridColumn headerText="Voltooid" itemRenderer="{cmpVoltooid}" rendererIsEditor="true"
+							   sortCompareFunction="compareVoltooid" width="100" />
 			<mx:DataGridColumn headerText="Jaar" itemRenderer="{cmpJaarDiploma}" rendererIsEditor="true"
 							   width="60" />
 		</gui:columns>
