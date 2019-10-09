@@ -43,14 +43,17 @@
 	<mx:FormItem label="Nationaliteit">
 		<gui:XmlTextInput restClient="{restClient}" objectXml="{objectXml}" propertyName="nationaliteit" />
 	</mx:FormItem>
-	<mx:FormItem label="Titels (voor de naam)">
+	<mx:FormItem label="Titels (vóór de achternaam)">
 		<gui:XmlTextInput restClient="{restClient}" objectXml="{objectXml}" propertyName="titels_voor" />
 	</mx:FormItem>
-	<mx:FormItem label="Titels (na de naam)">
+	<mx:FormItem label="Titels (na de achternaam)">
 		<gui:XmlTextInput restClient="{restClient}" objectXml="{objectXml}" propertyName="titels_na" />
 	</mx:FormItem>
 	<mx:FormItem label="Woonplaats">
 		<gui:XmlTextInput restClient="{restClient}" objectXml="{objectXml}" propertyName="woonplaats" />
+	</mx:FormItem>
+	<mx:FormItem label="Functie/titel">
+		<gui:XmlTextInput restClient="{restClient}" objectXml="{objectXml}" propertyName="functie_titel" />
 	</mx:FormItem>
 	<mx:FormItem label="IT ervaring sinds">
 		<gui:XmlTextInput restClient="{restClient}" objectXml="{objectXml}" propertyName="it_ervaring_sinds" />

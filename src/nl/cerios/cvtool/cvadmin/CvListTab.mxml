@@ -116,7 +116,8 @@
 			<mx:VBox>
 				<mx:RadioButtonGroup id="layoutBG" />
 				<mx:Label text="Opmaak" styleName="heading-label" />
-				<mx:RadioButton groupName="layoutBG" label="Cerios" value="Cerios" selected="true" />
+				<mx:RadioButton groupName="layoutBG" label="Valori" value="Valori" selected="true" />
+				<mx:RadioButton groupName="layoutBG" label="Cerios" value="Cerios" />
 				<mx:RadioButton groupName="layoutBG" label="geen" value="" />
 			</mx:VBox>
 			<mx:VRule height="{cvStyleButtons.height}" />

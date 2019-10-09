@@ -22,14 +22,14 @@
 			public static const DATAGRID_FIELD_NAMES:ArrayCollection = new ArrayCollection(["",
 				"categorie", "omschrijving", "kennisniveau"]);
 			public static const OPTIONS_CATEGORIE:Array = [
-				{label:'Methoden en technieken', data:'Methoden en technieken'},
-				{label:'Programmeertalen', data:'Programmeertalen'},
-				{label:'Hardware', data:'Hardware'},
-				{label:'Software', data:'Software'},
-				{label:'Operating systems', data:'Operating systems'},
 				{label:'Databases', data:'Databases'},
-				{label:'Netwerken', data:'Netwerken'},
-				{label:'Tools', data:'Tools'}
+				{label:'Applicaties', data:'Applicaties'},
+				{label:'Tools', data:'Tools'},
+				{label:'OS en Netwerken', data:'OS en Netwerken'},
+				{label:'Programmeren', data:'Programmeren'},
+				{label:'Methodes', data:'Methodes'},
+				{label:'Expertises', data:'Expertises'},
+				{label:'Certificeringen', data:'Certificeringen'}
 			];
 			public static const OPTIONS_NIVEAU:Array = [
 				{label:"■ ■ ■ ■ ■", data:5},

@@ -62,8 +62,6 @@
 					+ listLine + "Het sorteren van tabelgegevens heeft geen invloed op de volgorde in je cv, behalve bij <i>Werkopdrachten</i>."
 					+ listLine + "Die zijn standaard gesorteerd op einddatum, maar dat kun je met drag&drop aanpassen."
 					+ listLine + "Dat kan handig zijn als je meerdere opdrachten tegelijk hebt."
-					+ listItem + "<i>Publiceren</i> plaatst je CV in"
-					+ " <a href='http://devbox.cerios.nl/share/page/site/cv/documentlibrary' target='_blank'><u>Alfresco</u></a>."
 					+ "\n\nIk heb geprobeerd alles zo gebruiksvriendelijk mogelijk te maken, maar elke tip en (positieve ;-) kritiek is welkom."
 					+ "\nProblemen? Een bug ontdekt? Stuur even een mailtje naar "
 					+ "<a href='mailto:rob.bosman@cerios.nl?subject=CVtool'><u>rob.bosman@cerios.nl</u></a>."
@@ -130,7 +128,7 @@
 				var formData:String = "restTarget=" + CVtool.REST_APP + "/_account/" + signedInAccountXml.@id
 					+ "&documentName=" + encodeURIComponent(docName)
 					+ "&locale=" + "nl_NL"
-					+ "&layout=" + "Cerios";
+					+ "&layout=" + "Valori";
 				// formData += "&authBasic=" + "Y3Z0b29sOmN2dG9vbA==";
 				
 				// Request the REST server to publish the data.
@@ -187,7 +185,7 @@
 	<mx:HBox width="100%" verticalAlign="middle">
 		<mx:Button label="Preview" icon="{CVtool.selectedLocaleInfo.icon}" labelPlacement="left"
 				   enabled="{signedInAccountXml != null}"
-				   click="previewCv(restClient, signedInAccountXml.@id, CVtool.selectedLocaleInfo.locale, 'Cerios', true)" />
+				   click="previewCv(restClient, signedInAccountXml.@id, CVtool.selectedLocaleInfo.locale, 'Valori', true)" />
 		<mx:Spacer width="100%" />
 		<mx:Label text="{(cvXml.@published == 'true') ? 'Deze gegevens zijn gepubliceerd.'
 				  									  : 'De wijzigingen zijn nog niet gepubliceerd.'}"
