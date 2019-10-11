@@ -13,20 +13,23 @@
 		]]>
 	</fx:Script>
 	
+	<mx:FormItem label="Functie/titel">
+		<gui:XmlTextInput restClient="{restClient}" objectXml="{objectXml}" width="200" propertyName="functie_titel" />
+	</mx:FormItem>
 	<mx:FormItem label="Voornaam">
-		<gui:XmlTextInput restClient="{restClient}" objectXml="{objectXml}" propertyName="voornaam" />
+		<gui:XmlTextInput restClient="{restClient}" objectXml="{objectXml}" width="200" propertyName="voornaam" />
 	</mx:FormItem>
 	<mx:FormItem label="Voorletters">
-		<gui:XmlTextInput restClient="{restClient}" objectXml="{objectXml}" propertyName="voorletters" />
+		<gui:XmlTextInput restClient="{restClient}" objectXml="{objectXml}" width="200" propertyName="voorletters" />
 	</mx:FormItem>
 	<mx:FormItem label="Tussenvoegsel">
-		<gui:XmlTextInput restClient="{restClient}" objectXml="{objectXml}" propertyName="tussenvoegsel" />
+		<gui:XmlTextInput restClient="{restClient}" objectXml="{objectXml}" width="200" propertyName="tussenvoegsel" />
 	</mx:FormItem>
 	<mx:FormItem label="Achternaam">
-		<gui:XmlTextInput restClient="{restClient}" objectXml="{objectXml}" propertyName="achternaam" />
+		<gui:XmlTextInput restClient="{restClient}" objectXml="{objectXml}" width="200" propertyName="achternaam" />
 	</mx:FormItem>
 	<mx:FormItem label="Meisjesnaam">
-		<gui:XmlTextInput restClient="{restClient}" objectXml="{objectXml}" propertyName="meisjesnaam"
+		<gui:XmlTextInput restClient="{restClient}" objectXml="{objectXml}" width="200" propertyName="meisjesnaam"
 						  enabled="{geslachtBG.selectedValue != 0}" />
 	</mx:FormItem>
 	<mx:FormItem label="Geboortedatum">
@@ -41,24 +44,21 @@
 		</mx:HBox>
 	</mx:FormItem>
 	<mx:FormItem label="Nationaliteit">
-		<gui:XmlTextInput restClient="{restClient}" objectXml="{objectXml}" propertyName="nationaliteit" />
+		<gui:XmlTextInput restClient="{restClient}" objectXml="{objectXml}" width="200" propertyName="nationaliteit" />
 	</mx:FormItem>
 	<mx:FormItem label="Titels (vóór de achternaam)">
-		<gui:XmlTextInput restClient="{restClient}" objectXml="{objectXml}" propertyName="titels_voor" />
+		<gui:XmlTextInput restClient="{restClient}" objectXml="{objectXml}" width="200" propertyName="titels_voor" />
 	</mx:FormItem>
 	<mx:FormItem label="Titels (na de achternaam)">
-		<gui:XmlTextInput restClient="{restClient}" objectXml="{objectXml}" propertyName="titels_na" />
+		<gui:XmlTextInput restClient="{restClient}" objectXml="{objectXml}" width="200" propertyName="titels_na" />
 	</mx:FormItem>
 	<mx:FormItem label="Woonplaats">
-		<gui:XmlTextInput restClient="{restClient}" objectXml="{objectXml}" propertyName="woonplaats" />
-	</mx:FormItem>
-	<mx:FormItem label="Functie/titel">
-		<gui:XmlTextInput restClient="{restClient}" objectXml="{objectXml}" propertyName="functie_titel" />
+		<gui:XmlTextInput restClient="{restClient}" objectXml="{objectXml}" width="200" propertyName="woonplaats" />
 	</mx:FormItem>
 	<mx:FormItem label="IT ervaring sinds">
-		<gui:XmlTextInput restClient="{restClient}" objectXml="{objectXml}" propertyName="it_ervaring_sinds" />
+		<gui:XmlTextInput restClient="{restClient}" objectXml="{objectXml}" width="200" propertyName="it_ervaring_sinds" />
 	</mx:FormItem>
 	<mx:FormItem label="Werkervaring sinds">
-		<gui:XmlTextInput restClient="{restClient}" objectXml="{objectXml}" propertyName="werkervaring_sinds" />
+		<gui:XmlTextInput restClient="{restClient}" objectXml="{objectXml}" width="200" propertyName="werkervaring_sinds" />
 	</mx:FormItem>
 </mx:Form>

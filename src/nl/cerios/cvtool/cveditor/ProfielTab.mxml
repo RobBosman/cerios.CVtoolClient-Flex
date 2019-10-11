@@ -34,13 +34,16 @@
 		<mx:Label text="Profiel" height="{profielGUI.height}" />
 		<mx:Label text="Persoonlijke eigenschappen" height="{pers_eig_GUI.height}" />
 		<mx:Label text="Vaardigheden" height="{vaardighedenGUI.height}" />
+		<mx:Label text="Interesses" height="{interessesGUI.height}" />
 	</mx:VBox>
 	<mx:VBox width="100%" height="100%">
 		<gui:XmlTextArea restClient="{restClient}" objectXml="{getProfielXml(cvXml, CVtool.selectedLocaleInfo)}"
-						 propertyName="profiel" width="100%" height="33%" id="profielGUI" />
+						 propertyName="profiel" width="100%" height="40%" id="profielGUI" />
 		<gui:XmlTextArea restClient="{restClient}" objectXml="{getProfielXml(cvXml, CVtool.selectedLocaleInfo)}"
-						 propertyName="persoonlijke_eigenschappen" width="100%" height="33%" id="pers_eig_GUI" />
+						 propertyName="persoonlijke_eigenschappen" width="100%" height="30%" id="pers_eig_GUI" />
 		<gui:XmlTextArea restClient="{restClient}" objectXml="{getProfielXml(cvXml, CVtool.selectedLocaleInfo)}"
-						 propertyName="vaardigheden" width="100%" height="33%" id="vaardighedenGUI" />
+						 propertyName="vaardigheden" width="100%" height="20%" id="vaardighedenGUI" />
+		<gui:XmlTextArea restClient="{restClient}" objectXml="{getProfielXml(cvXml, CVtool.selectedLocaleInfo)}"
+						 propertyName="interesses" width="100%" height="10%" id="interessesGUI" />
 	</mx:VBox>
 </mx:HBox>

@@ -221,10 +221,10 @@
 							 propertyName="opdrachtformulering" width="100%" height="40%"
 							 backgroundAlpha="{dataGrid.selectedIndex == -1 ? 0.0 : 1.0}" id="opdrachtformuleringGUI" />
 			<gui:XmlTextArea restClient="{restClient}" objectXml="{getWerkervaringXml(dataGrid.selectedItem, CVtool.selectedLocaleInfo.locale)}"
-							 propertyName="werkzaamheden" width="100%" height="40%"
+							 propertyName="werkzaamheden" width="100%" height="30%"
 							 backgroundAlpha="{dataGrid.selectedIndex == -1 ? 0.0 : 1.0}" id="werkzaamhedenGUI" />
 			<gui:XmlTextArea restClient="{restClient}" objectXml="{getWerkervaringXml(dataGrid.selectedItem, CVtool.selectedLocaleInfo.locale)}"
-							 propertyName="resultaat" width="100%" height="10%"
+							 propertyName="resultaat" width="100%" height="20%"
 							 backgroundAlpha="{dataGrid.selectedIndex == -1 ? 0.0 : 1.0}" id="resultaatGUI" />
 			<gui:XmlTextArea restClient="{restClient}" objectXml="{getWerkervaringXml(dataGrid.selectedItem, CVtool.selectedLocaleInfo.locale)}"
 							 propertyName="steekwoorden" width="100%" height="10%"

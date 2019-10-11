@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:VBox xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx"
+		 xmlns:sp="library://ns.adobe.com/flex/spark"
+		 xmlns:gui="nl.bransom.gui.*"
+		 enabled="{parentXml != null}"
+		 creationComplete="init()">
+	
+	<fx:Script>
+		<![CDATA[
+			import mx.binding.utils.BindingUtils;
+			import mx.collections.ArrayCollection;
+			import mx.events.DataGridEvent;
+			
+			import nl.bransom.XmlUtils;
+			import nl.bransom.rest.RestClient;
+			
+			[Bindable] public var restClient:RestClient;
+			[Bindable] public var parentXml:XML;
+			[Bindable] public var objectName:String;
+			
+			public static const DATAGRID_FIELD_NAMES:ArrayCollection = new ArrayCollection(["",
+				"naam_referent", "functie_referent", "omschrijving", "opnemen_in_cv"]);
+			[Bindable] public static var _restClient:RestClient;
+			
+			private function init():void {
+				BindingUtils.bindSetter(setRestClient, this, "restClient");
+				BindingUtils.bindSetter(refreshXmlList, this, "parentXml");
+				BindingUtils.bindSetter(refreshXmlList, this, "objectName");
+			}
+			private function setRestClient(restClient:RestClient):void {
+				_restClient = restClient;
+			}
+			
+			private function createItem(event:Event = null):void {
+				var createdXml:XML = restClient.createEntityNode(parentXml, objectName, 0);
+				createdXml.opnemen_in_cv = 1;
+				refreshXmlList();
+				dataGrid.selectedItem = createdXml;
+				dataGrid.scrollToIndex(dataGrid.selectedIndex);
+			}
+			
+			private function deleteItem(xmlToBeDeleted:XML):void {
+				restClient.deleteEntityNode(xmlToBeDeleted);
+				refreshXmlList();
+			}
+			
+			private function refreshXmlList(dummy:Object = null):void {
+				var xmlList:XMLList = XmlUtils.getElements(parentXml, objectName);
+				xmlList = XmlUtils.sortXmlList(xmlList, "opnemen_in_cv", Array.DESCENDING | Array.NUMERIC);
+				dataGrid.setXmlData(xmlList);
+			}
+		]]>
+	</fx:Script>
+	
+	<fx:Declarations>
+		<fx:Component id="cmpNaamReferent">
+			<gui:XmlTextInput restClient="{ReferentiesTab._restClient}" objectXml="{data as XML}"
+							  propertyName="{ReferentiesTab.DATAGRID_FIELD_NAMES.getItemAt(1)}" />
+		</fx:Component>
+		<fx:Component id="cmpFunctieReferent">
+			<gui:XmlTextInput restClient="{ReferentiesTab._restClient}" objectXml="{data as XML}"
+							  propertyName="{ReferentiesTab.DATAGRID_FIELD_NAMES.getItemAt(2) + '_' + CVtool.selectedLocaleInfo.locale}" />
+		</fx:Component>
+		<fx:Component id="cmpOmschrijving">
+			<gui:XmlTextArea restClient="{ReferentiesTab._restClient}" objectXml="{data as XML}" height="60"
+							  propertyName="{ReferentiesTab.DATAGRID_FIELD_NAMES.getItemAt(3) + '_' + CVtool.selectedLocaleInfo.locale}" />
+		</fx:Component>
+		<fx:Component id="cmpOpnemenInCv">
+			<gui:XmlCheckBox restClient="{ReferentiesTab._restClient}" objectXml="{data as XML}" paddingLeft="10"
+							 propertyName="{ReferentiesTab.DATAGRID_FIELD_NAMES.getItemAt(4)}"
+							 toolTip="geef hier aan of deze referentie in het cv moet worden opgenomen" />
+		</fx:Component>
+	</fx:Declarations>
+	
+	<mx:HBox>
+		<mx:Button label="Toevoegen" icon="{CVtool.ICON_CREATE}" enabled="{parentXml != null}" click="createItem()" />
+		<mx:Button label="Verwijderen" icon="{CVtool.ICON_DELETE}" enabled="{dataGrid.selectedItem != null}"
+				   click="deleteItem(dataGrid.selectedItem as XML)" />
+	</mx:HBox>
+	<gui:XmlDataGrid id="dataGrid" fieldNames="{DATAGRID_FIELD_NAMES}" width="100%" height="100%">
+		<gui:columns>
+			<mx:DataGridColumn width="20" sortable="false" />
+			<mx:DataGridColumn headerText="Naam referent" itemRenderer="{cmpNaamReferent}" rendererIsEditor="true" width="200" />
+			<mx:DataGridColumn headerText="Functie referent" itemRenderer="{cmpFunctieReferent}" rendererIsEditor="true" width="200" />
+			<mx:DataGridColumn headerText="Omschrijving" itemRenderer="{cmpOmschrijving}" rendererIsEditor="true" />
+			<mx:DataGridColumn headerText="in cv" itemRenderer="{cmpOpnemenInCv}" rendererIsEditor="true" width="50" />
+		</gui:columns>
+	</gui:XmlDataGrid>
+</mx:VBox>

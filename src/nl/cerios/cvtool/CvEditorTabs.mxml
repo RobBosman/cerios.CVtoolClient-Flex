@@ -179,6 +179,8 @@
 								objectName="vaardigheid" />
 		<cveditor:PublicatiesTab label="Publicaties" restClient="{restClient}" parentXml="{cvXml}"
 								 objectName="publicatie" />
+		<cveditor:ReferentiesTab label="Referenties" restClient="{restClient}" parentXml="{cvXml}"
+								 objectName="referentie" />
 		<cveditor:WerkopdrachtenTab label="Werkervaring" restClient="{restClient}" parentXml="{cvXml}"
 								  objectName="werkopdracht" />
 	</mx:TabNavigator>
