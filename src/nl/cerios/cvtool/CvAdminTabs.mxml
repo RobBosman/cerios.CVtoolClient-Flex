@@ -71,6 +71,7 @@
 					+ listItem + "<i>AutoSave</i>: al je wijzigingen worden na 2 seconden vanzelf opgeslagen."
 					+ listLine + "Als je niet van plan bent iets te wijzigen, zet 'AutoSave' dan uit met de knop rechtsonder."
 					+ listItem + "<i>Sorteren</i>: gegevens in tabellen kun je sorteren door op de kolomheader te klikken."
+					+ listItem + "Layout formaat <i>Valori</i> is toegevoegd."
 					+ "\n\nIk heb geprobeerd alles zo gebruiksvriendelijk mogelijk te maken, maar elke tip en (positieve ;-) kritiek is welkom."
 					+ "\nProblemen? Een bug ontdekt? Stuur even een mailtje naar "
 					+ "<a href='mailto:rob.bosman@cerios.nl?subject=CVtool'><u>rob.bosman@cerios.nl</u></a>."
