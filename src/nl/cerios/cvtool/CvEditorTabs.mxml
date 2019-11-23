@@ -53,26 +53,18 @@
 				const listItem:String = "\n&nbsp;&nbsp;&nbsp;&nbsp;▪ ";
 				const listLine:String = "\n&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
 				return "Welkom " + XmlUtils.getTextContent(signedInAccountXml, "name").replace(/\..*/g, '')
-					+ "!\n\nDit is versie <b>" + CVtool.APP_VERSION + "</b> van de <b>CERIOS CVtool</b>, waarmee je je curriculum vitae zowel in het Nederlands als in het Engels kunt invoeren."
+					+ "\n\nDit is versie <b>" + CVtool.APP_VERSION + "</b> van de <b>Cerios CVtool</b>, waarmee je je curriculum vitae zowel in het Nederlands als in het Engels kunt invoeren."
 					+ "\nLet even op het volgende:\n"
-					+ listItem + "<i>AutoSave</i>: al je wijzigingen worden na 2 seconden vanzelf opgeslagen."
+					+ listItem + "<i>AutoSave</i>: al je wijzigingen worden na twee seconden vanzelf opgeslagen."
 					+ listLine + "Als je niet van plan bent iets te wijzigen, zet 'AutoSave' dan uit met de knop rechtsonder."
-					+ listItem + "<i>Foto</i>: voeg hier je visitekaartje (jpg) in."
 					+ listItem + "<i>Sorteren</i>: gegevens in tabellen kun je sorteren door op de kolomheader te klikken."
 					+ listLine + "Het sorteren van tabelgegevens heeft geen invloed op de volgorde in je cv, behalve bij <i>Werkopdrachten</i>."
 					+ listLine + "Die zijn standaard gesorteerd op einddatum, maar dat kun je met drag&drop aanpassen."
 					+ listLine + "Dat kan handig zijn als je meerdere opdrachten tegelijk hebt."
-					+ listItem + "De layout van je cv is voortaan in <i>Valori</i>-formaat."
-					+ listItem + "Er zijn nieuwe velden toegevoegd voor dat Valori-formaat:"
-					+ listLine + "● 'Functie/titel' in de tab Persoonsgegevens"
-					+ listLine + "● enkele categorieën in de tab Vaardigheden zijn hernoemd"
-					+ listLine + "● 'Interesses' in de tab Profiel"
-					+ listLine + "● de tab Referenties is nieuw"
-					+ listLine + "● 'Resultaat' in de tab Werkervaring"
-					+ "\n\nIk heb geprobeerd alles zo gebruiksvriendelijk mogelijk te maken, maar elke tip en (positieve ;-) kritiek is welkom."
+					+ "\n\nIk heb geprobeerd alles zo gebruiksvriendelijk mogelijk te maken, maar tips en (positieve ;-) kritiek zijn altijd welkom."
 					+ "\nProblemen? Een bug ontdekt? Stuur even een mailtje naar "
-					+ "<a href='mailto:rob.bosman@cerios.nl?subject=CVtool'><u>rob.bosman@cerios.nl</u></a>."
-					+ "\n\nGroet,\nRob";
+					+ "<a target='blank' href='mailto:RobBosman@valori.nl?subject=CVtool'><u>RobBosman@valori.nl</u></a>."
+					+ "\n\nGroeten!\nRob";
 			}
 			
 			public static function previewCv(restClient:RestClient, accountId:String, locale:String,

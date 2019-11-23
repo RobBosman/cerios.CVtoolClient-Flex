@@ -32,7 +32,7 @@
 			[Embed(source="/assets/icon_flag_UK.png")] public static const ICON_FLAG_UK:Class;
 			
 			public static const APP_TITLE:String = "Cerios CVtool";
-			public static const APP_VERSION:String = "v20191012";
+			public static const APP_VERSION:String = "v20191124";
 			public static const ROL_EDIT_EIGEN_CV:String = "edit eigen CV";
 			public static const ROL_VIEW_ALLE_CVS:String = "view alle CVs";
 			public static const REST_APP:String = "cv";
@@ -106,12 +106,13 @@
 			}
 			
 			private function getSignInText():String {
-				return "Om de CVtool te gebruiken moet je je aanmelden met je <b>Cerios e-mail account</b>."
-					+ "<br/>Tijdens het inlogproces controleert de CVtool je e-mailadres, je moet daar eenmalig toestemming voor geven. "
-					+ "<a href='https://security.google.com/settings/security/permissions'><u><b>Hier</b></u></a>"
+				return "Om de CVtool te gebruiken moet je je aanmelden met je <b>VALORI</b> account."
+					+ "\nTijdens het inlogproces controleert de CVtool je account, je moet daar eenmalig toestemming voor geven."
+					+ "\n\n<a target='blank' href='https://account.activedirectory.windowsazure.com/r/#/applications'><u><b>Hier</b></u></a>"
 					+ " kun je die toestemming bekijken en eventueel weer intrekken."
-					+ "<br/><br/><i>Problemen? Mail even naar "
-					+ "<a href='mailto:rob.bosman@cerios.nl?subject=CVtool'><u>rob.bosman@cerios.nl</u></a>.</i>";
+					+ "\nAls je de 'Cerios CVtool' app verwijdert blijven je CV-gegevens bewaard."
+					+ "\nNa opnieuw inloggen (en toestemming verlenen) kun je daar weer bij."
+					+ "\n<i>Problemen? <a target='blank' href='mailto:RobBosman@valori.nl?subject=CVtool'><u>Mail</u></a> even!</i>";
 			}
 
 			private function signOut():void {
@@ -200,7 +201,7 @@
 			
 			<mx:VBox id="signInTab" includeIn="SIGNED_OUT" horizontalAlign="center" horizontalCenter="0" width="100%">
 				<mx:TextArea htmlText="{getSignInText()}" editable="false" textAlign="center" styleName="info"
-							 width="525" height="110" />
+							 width="550" height="150" />
 				<mx:Button id="signInButton" label="Aanmelden" click="restClient.signIn()"/>
 			</mx:VBox>
 

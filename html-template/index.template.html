@@ -11,7 +11,8 @@
     Learn more about Flex at http://flex.org 
     // -->
     <head>
-        <title>${title}</title>
+        <title>Cerios CVtool</title>
+        <link rel="shortcut icon" type="image/x-icon" href="CVtool.ico" />
         <meta name="google" value="notranslate" />         
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
         <!-- Include CSS to eliminate any default margins/padding and set the height of the html element and 
@@ -22,10 +23,18 @@
         -->
         <style type="text/css" media="screen"> 
             html, body  { height:100%; }
-            body { margin:0; padding:0; overflow:auto; text-align:center; 
-                   background-color: ${bgcolor}; }   
+            body { margin:0; padding:0; overflow:auto; background-color: #FAFAFA; }
             object:focus { outline:none; }
             #flashContent { display:none; }
+			.flash {
+				max-width: 700px;
+				margin: auto;
+				margin-top: 200px;
+			    font-family: Arial, Helvetica, sans-serif;
+			}
+            .flash * {
+				text-align:center;
+			}
         </style>
         
         <!-- Enable Browser History by replacing useBrowserHistory tokens with two hyphens -->
@@ -43,7 +52,7 @@
             var flashvars = {};
             var params = {};
             params.quality = "high";
-            params.bgcolor = "${bgcolor}";
+            params.bgcolor = "#FAFAFA";
             params.allowscriptaccess = "sameDomain";
             params.allowfullscreen = "true";
             var attributes = {};
@@ -64,41 +73,60 @@
              JavaScript and Flash plug-in support is available. The div is initially hidden so that it doesn't show
              when JavaScript is disabled.
         -->
-        <div id="flashContent">
+        <div id="flashContent" class="flash">
+			<h2>Welkom bij de Cerios CVtool!</h2>
             <p>
-                To view this page ensure that Adobe Flash Player version 
-                ${version_major}.${version_minor}.${version_revision} or greater is installed. 
+				Deze webapplicatie vereist dat Adobe Flash is ingeschakeld.
+				<br/>Flash wordt echter uitgefaseerd. Browsers ondersteunen het nog wel, maar het wordt standaard geblokkeerd.
+				<br/><br/>Hiermee kun je het (tijdelijk en alleen voor deze webapplicatie) inschakelen:
+				<br/><br/>
+				<script type="text/javascript">
+					document.write("<a href='http://www.adobe.com/go/getflashplayer'>" 
+									+ "<img src='https://www.adobe.com/images/shared/download_buttons/get_flash_player.gif' alt='Get Adobe Flash player' /></a>" ); 
+				</script>
+				<br/><br/>
+				<i>De CVtool wordt omgebouwd zodat die niet langer afhankelijk is van Adobe Flash.
+				<br/>Dat moet uiterlijk eind 2020 klaar zijn, want dan wordt de Flash ondersteuning definitief beëindigd.
+				<br/>Tot die tijd moet je Flash dus elke keer opnieuw inschakelen.</i>
+                <!--
+				To view this page ensure that Adobe Flash Player version 
+                11.1.0 or greater is installed.
+				-->
             </p>
-            <script type="text/javascript"> 
-                var pageHost = ((document.location.protocol == "https:") ? "https://" : "http://"); 
-                document.write("<a href='http://www.adobe.com/go/getflashplayer'><img src='" 
-                                + pageHost + "www.adobe.com/images/shared/download_buttons/get_flash_player.gif' alt='Get Adobe Flash player' /></a>" ); 
-            </script> 
         </div>
         
         <noscript>
             <object classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000" width="${width}" height="${height}" id="${application}">
                 <param name="movie" value="${swf}.swf" />
                 <param name="quality" value="high" />
-                <param name="bgcolor" value="${bgcolor}" />
+                <param name="bgcolor" value="#FAFAFA" />
                 <param name="allowScriptAccess" value="sameDomain" />
                 <param name="allowFullScreen" value="true" />
                 <!--[if !IE]>-->
                 <object type="application/x-shockwave-flash" data="${swf}.swf" width="${width}" height="${height}">
                     <param name="quality" value="high" />
-                    <param name="bgcolor" value="${bgcolor}" />
+                    <param name="bgcolor" value="#FAFAFA" />
                     <param name="allowScriptAccess" value="sameDomain" />
                     <param name="allowFullScreen" value="true" />
                 <!--<![endif]-->
+					<div class="flash">
                 <!--[if gte IE 6]>-->
-                    <p> 
-                        Either scripts and active content are not permitted to run or Adobe Flash Player version
-                        ${version_major}.${version_minor}.${version_revision} or greater is not installed.
-                    </p>
+						<h2>Welkom bij de Cerios CVtool!</h2>
+						<p>
+							Deze webapplicatie vereist dat Adobe Flash is ingeschakeld.
+							<br/>Flash wordt echter uitgefaseerd.
+							<br/>Browsers ondersteunen het nog wel, maar het wordt standaard geblokkeerd.
+							<br/><br/>Hiermee kun je het (tijdelijk en alleen voor deze webapplicatie) inschakelen:
+						</p>
+						<!-- 
+							Either scripts and active content are not permitted to run or Adobe Flash Player version
+							${version_major}.${version_minor}.${version_revision} or greater is not installed.
+						-->
                 <!--<![endif]-->
-                    <a href="http://www.adobe.com/go/getflashplayer">
-                        <img src="http://www.adobe.com/images/shared/download_buttons/get_flash_player.gif" alt="Get Adobe Flash Player" />
-                    </a>
+						<a href="http://www.adobe.com/go/getflashplayer">
+							<img src="http://www.adobe.com/images/shared/download_buttons/get_flash_player.gif" alt="Get Adobe Flash Player" />
+						</a>
+					</div>
                 <!--[if !IE]>-->
                 </object>
                 <!--<![endif]-->
