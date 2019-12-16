@@ -53,7 +53,7 @@
 				const listItem:String = "\n&nbsp;&nbsp;&nbsp;&nbsp;▪ ";
 				const listLine:String = "\n&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
 				return "Welkom " + XmlUtils.getTextContent(signedInAccountXml, "name").replace(/\..*/g, '')
-					+ "\n\nDit is versie <b>" + CVtool.APP_VERSION + "</b> van de <b>Cerios CVtool</b>, waarmee je je curriculum vitae zowel in het Nederlands als in het Engels kunt invoeren."
+					+ "\n\nDit is versie <b>" + CVtool.APP_VERSION + "</b> van de <b>Cerios (Valori) CVtool</b>, waarmee je je curriculum vitae zowel in het Nederlands als in het Engels kunt invoeren."
 					+ "\nLet even op het volgende:\n"
 					+ listItem + "<i>AutoSave</i>: al je wijzigingen worden na twee seconden vanzelf opgeslagen."
 					+ listLine + "Als je niet van plan bent iets te wijzigen, zet 'AutoSave' dan uit met de knop rechtsonder."
@@ -188,9 +188,11 @@
 				   enabled="{signedInAccountXml != null}"
 				   click="previewCv(restClient, signedInAccountXml.@id, CVtool.selectedLocaleInfo.locale, 'Valori', true)" />
 		<mx:Spacer width="100%" />
+		<!--
 		<mx:Label text="{(cvXml.@published == 'true') ? 'Deze gegevens zijn gepubliceerd.'
 				  									  : 'De wijzigingen zijn nog niet gepubliceerd.'}"
 				  styleName="{(cvXml.@published == 'true') ? 'published' : 'unpublished'}"/>
 		<mx:Button label="Publiceren" enabled="{cvXml != null}" click="publish()" />
+		-->
 	</mx:HBox>
 </mx:VBox>

@@ -63,7 +63,7 @@
 				const listItem:String = "\n&nbsp;&nbsp;&nbsp;&nbsp;▪ ";
 				const listLine:String = "\n&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
 				return "Welkom " + XmlUtils.getTextContent(signedInAccountXml, "name").replace(/\..*/g, '')
-					+ "\n\nDit is versie <b>" + CVtool.APP_VERSION + "</b> van de <b>Cerios CVtool</b>, waarmee je je curriculum vitae zowel in het Nederlands als in het Engels kunt invoeren."
+					+ "\n\nDit is versie <b>" + CVtool.APP_VERSION + "</b> van de <b>Cerios (Valori) CVtool</b>, waarmee je je curriculum vitae zowel in het Nederlands als in het Engels kunt invoeren."
 					+ "\nAls je dit leest ben je een 'manager' en kun je tevens de accounts beheren en ieders CV opvragen."
 					+ "\nLet even op het volgende:\n"
 					+ listItem + "<i>AutoSave</i>: al je wijzigingen worden na twee seconden vanzelf opgeslagen."

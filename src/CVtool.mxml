@@ -23,7 +23,7 @@
 			import nl.bransom.gui.Utils;
 			import nl.bransom.rest.RestClient;
 			
-			[Embed(source="/assets/Cerios_banner.png")] public static const CERIOS_BANNER:Class;
+			[Embed(source="/assets/Cerios_banner_struck.png")] public static const CERIOS_BANNER:Class;
 			[Embed(source="/assets/CVtool.png")] public static const CVTOOL_IMG:Class;
 			[Embed(source="/assets/icon_create.png")] public static const ICON_CREATE:Class;
 			[Embed(source="/assets/icon_change.png")] public static const ICON_CHANGE:Class;
@@ -31,8 +31,8 @@
 			[Embed(source="/assets/icon_flag_NL.png")] public static const ICON_FLAG_NL:Class;
 			[Embed(source="/assets/icon_flag_UK.png")] public static const ICON_FLAG_UK:Class;
 			
-			public static const APP_TITLE:String = "Cerios CVtool";
-			public static const APP_VERSION:String = "v20191124";
+			public static const APP_TITLE:String = "Cerios (Valori) CVtool";
+			public static const APP_VERSION:String = "v20191216";
 			public static const ROL_EDIT_EIGEN_CV:String = "edit eigen CV";
 			public static const ROL_VIEW_ALLE_CVS:String = "view alle CVs";
 			public static const REST_APP:String = "cv";
@@ -110,7 +110,7 @@
 					+ "\nTijdens het inlogproces controleert de CVtool je account, je moet daar eenmalig toestemming voor geven."
 					+ "\n\n<a target='blank' href='https://account.activedirectory.windowsazure.com/r/#/applications'><u><b>Hier</b></u></a>"
 					+ " kun je die toestemming bekijken en eventueel weer intrekken."
-					+ "\nAls je de 'Cerios CVtool' app verwijdert blijven je CV-gegevens bewaard."
+					+ "\nAls je de 'Cerios (Valori) CVtool' app verwijdert blijven je CV-gegevens bewaard."
 					+ "\nNa opnieuw inloggen (en toestemming verlenen) kun je daar weer bij."
 					+ "\n<i>Problemen? <a target='blank' href='mailto:RobBosman@valori.nl?subject=CVtool'><u>Mail</u></a> even!</i>";
 			}
@@ -178,6 +178,7 @@
 						 x.SIGNED_IN_ADMIN="0" y.SIGNED_IN_ADMIN="0"
 						 x.SIGNED_IN_STAFF="0" y.SIGNED_IN_STAFF="0">
 					<mx:Image source="{CERIOS_BANNER}" />
+					<mx:Label text="VALORI" styleName="valori" height="100%" />
 					<mx:Label text="CVtool" styleName="title" height="100%" />
 				</mx:HBox>
 				<mx:VBox width="100%" height="100%" includeIn="SIGNED_IN_ADMIN,SIGNED_IN_STAFF">
