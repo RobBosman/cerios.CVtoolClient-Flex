@@ -2,8 +2,7 @@
 <mx:VBox xmlns:mx="library://ns.adobe.com/flex/mx"
 		 xmlns:fx="http://ns.adobe.com/mxml/2009"
 		 xmlns:cveditor="nl.cerios.cvtool.cveditor.*"
-		 enabled="{signedInAccountXml != null}"
-		 creationComplete="init()">
+		 creationComplete="init()" enabled="{signedInAccountXml != null}">
 	
 	<fx:Script>
 		<![CDATA[
@@ -57,6 +56,7 @@
 					+ "\nLet even op het volgende:\n"
 					+ listItem + "<i>AutoSave</i>: al je wijzigingen worden na twee seconden vanzelf opgeslagen."
 					+ listLine + "Als je niet van plan bent iets te wijzigen, zet 'AutoSave' dan uit met de knop rechtsonder."
+					+ listItem + "<i>Publiceren</i> plaatst je cv in de <a target='blank' href='https://valorinl.sharepoint.com/sites/Kantoor/CV_databank'><u>CV Databank</u></a> in SharePoint"
 					+ listItem + "<i>Sorteren</i>: gegevens in tabellen kun je sorteren door op de kolomheader te klikken."
 					+ listLine + "Het sorteren van tabelgegevens heeft geen invloed op de volgorde in je cv, behalve bij <i>Werkopdrachten</i>."
 					+ listLine + "Die zijn standaard gesorteerd op einddatum, maar dat kun je met drag&drop aanpassen."
@@ -96,7 +96,7 @@
 			private function publish():void {
 				// Perform the following steps:
 				// 1. save any changes to the REST server
-				// 2. publish the document in Alresco
+				// 2. publish the document in SharePoint
 				// 3. publish the stored data on the REST server
 				// 4. mark the REST data as 'published'
 
@@ -106,24 +106,24 @@
 				var publishRestTask:ChainableTask = new ChainableTask();
 				publishRestTask.oneArgChainableMethod = restClient.publish;
 				publishRestTask.argument = cvXml;
-				// Step 2: publish the latest version in Alfresco.
-				var publishInAlfrescoTask:ChainableTask = new ChainableTask();
-				publishInAlfrescoTask.oneArgChainableMethod = publishInAlfresco;
-				publishInAlfrescoTask.nextTask = publishRestTask;
+				// Step 2: publish the latest version in SharePoint.
+				var publishInSharePointTask:ChainableTask = new ChainableTask();
+				publishInSharePointTask.oneArgChainableMethod = publishInSharePoint;
+				publishInSharePointTask.nextTask = publishRestTask;
 				// Execute the chain.
 				// Step 1: save any changed data.
-				restClient.save(null, publishInAlfrescoTask);
+				restClient.save(null, publishInSharePointTask);
 			}
 			
-			// Send a publish-in-Alfresco-request to the REST server.
-			private function publishInAlfresco(dummy:* = null, nextTask:ChainableTask = null):void {
+			// Send a publish-in-SharePoint-request to the REST server.
+			private function publishInSharePoint(dummy:* = null, nextTask:ChainableTask = null):void {
 				// Compose the document name...
-				var docName:String = "cv " + XmlUtils.getTextContent(persoonsgegevensXml, "voornaam")
-						+ " " + XmlUtils.getTextContent(persoonsgegevensXml, "tussenvoegsel")
-						+ " " + XmlUtils.getTextContent(persoonsgegevensXml, "achternaam");
-				docName = docName.replace("  ", " ");
-				// ...and publish it in Alfresco.
-				var url:String = "publishToAlfresco.php";
+				var docName:String = "CV_" + CVtool.selectedLocaleInfo.locale.substr(3) + "_"
+						+ XmlUtils.getTextContent(persoonsgegevensXml, "voornaam")
+						+ XmlUtils.getTextContent(persoonsgegevensXml, "tussenvoegsel")
+						+ XmlUtils.getTextContent(persoonsgegevensXml, "achternaam");
+				// ...and publish it in SharePoint.
+				var url:String = "publishToSharePoint.php";
 				var formData:String = "restTarget=" + CVtool.REST_APP + "/_account/" + signedInAccountXml.@id
 					+ "&documentName=" + encodeURIComponent(docName)
 					+ "&locale=" + "nl_NL"
@@ -159,40 +159,38 @@
 	</fx:Script>
 
 	<mx:TabNavigator width="100%" height="100%" styleName="main-container">
-		<mx:Canvas label="Info" width="100%" height="100%">
-			<mx:TextArea htmlText="{getInfoHtml(signedInAccountXml)}" editable="false" styleName="info"
-						 width="100%" height="100%" />
+		<mx:Canvas width="100%" height="100%" label="Info">
+			<mx:TextArea width="100%" height="100%" editable="false"
+						 htmlText="{getInfoHtml(signedInAccountXml)}" styleName="info"/>
 		</mx:Canvas>
-		<cveditor:PersoonsgegevensTab label="Persoonsgegevens" restClient="{restClient}"
-									objectXml="{persoonsgegevensXml}" />
-		<cveditor:FotoTab label="Foto" restClient="{restClient}" objectXml="{persoonsgegevensXml}" />
-		<cveditor:ProfielTab label="Profiel" restClient="{restClient}" cvXml="{cvXml}"
-						   objectName="profiel" />
-		<cveditor:OpleidingTab label="Opleiding" restClient="{restClient}" parentXml="{cvXml}"
-							 objectName="opleiding" />
-		<cveditor:TalenkennisTab label="Talen" restClient="{restClient}" parentXml="{cvXml}"
-								 objectName="talenkennis" />
-		<cveditor:BranchekennisTab label="Branche" restClient="{restClient}" parentXml="{cvXml}"
-								objectName="branchekennis" />
-		<cveditor:VaardighedenTab label="Vaardigheden" restClient="{restClient}" parentXml="{cvXml}"
-								objectName="vaardigheid" />
-		<cveditor:PublicatiesTab label="Publicaties" restClient="{restClient}" parentXml="{cvXml}"
-								 objectName="publicatie" />
-		<cveditor:ReferentiesTab label="Referenties" restClient="{restClient}" parentXml="{cvXml}"
-								 objectName="referentie" />
-		<cveditor:WerkopdrachtenTab label="Werkervaring" restClient="{restClient}" parentXml="{cvXml}"
-								  objectName="werkopdracht" />
+		<cveditor:PersoonsgegevensTab label="Persoonsgegevens" objectXml="{persoonsgegevensXml}"
+									  restClient="{restClient}"/>
+		<cveditor:FotoTab label="Foto" objectXml="{persoonsgegevensXml}" restClient="{restClient}"/>
+		<cveditor:ProfielTab label="Profiel" cvXml="{cvXml}" objectName="profiel"
+							 restClient="{restClient}"/>
+		<cveditor:OpleidingTab label="Opleiding" objectName="opleiding" parentXml="{cvXml}"
+							   restClient="{restClient}"/>
+		<cveditor:TalenkennisTab label="Talen" objectName="talenkennis" parentXml="{cvXml}"
+								 restClient="{restClient}"/>
+		<cveditor:BranchekennisTab label="Branche" objectName="branchekennis" parentXml="{cvXml}"
+								   restClient="{restClient}"/>
+		<cveditor:VaardighedenTab label="Vaardigheden" objectName="vaardigheid" parentXml="{cvXml}"
+								  restClient="{restClient}"/>
+		<cveditor:PublicatiesTab label="Publicaties" objectName="publicatie" parentXml="{cvXml}"
+								 restClient="{restClient}"/>
+		<cveditor:ReferentiesTab label="Referenties" objectName="referentie" parentXml="{cvXml}"
+								 restClient="{restClient}"/>
+		<cveditor:WerkopdrachtenTab label="Werkervaring" objectName="werkopdracht"
+									parentXml="{cvXml}" restClient="{restClient}"/>
 	</mx:TabNavigator>
 	<mx:HBox width="100%" verticalAlign="middle">
-		<mx:Button label="Preview" icon="{CVtool.selectedLocaleInfo.icon}" labelPlacement="left"
-				   enabled="{signedInAccountXml != null}"
-				   click="previewCv(restClient, signedInAccountXml.@id, CVtool.selectedLocaleInfo.locale, 'Valori', true)" />
-		<mx:Spacer width="100%" />
-		<!--
-		<mx:Label text="{(cvXml.@published == 'true') ? 'Deze gegevens zijn gepubliceerd.'
-				  									  : 'De wijzigingen zijn nog niet gepubliceerd.'}"
-				  styleName="{(cvXml.@published == 'true') ? 'published' : 'unpublished'}"/>
-		<mx:Button label="Publiceren" enabled="{cvXml != null}" click="publish()" />
-		-->
+		<mx:Button label="Preview"
+				   click="previewCv(restClient, signedInAccountXml.@id, CVtool.selectedLocaleInfo.locale, 'Valori', true)"
+				   enabled="{signedInAccountXml != null}" icon="{CVtool.selectedLocaleInfo.icon}"
+				   labelPlacement="left"/>
+		<mx:Spacer width="100%"/>
+		<mx:Label styleName="{(cvXml.@published == 'true') ? 'published' : 'unpublished'}"
+				  text="{(cvXml.@published == 'true') ? 'Deze gegevens zijn gepubliceerd.'                  : 'De wijzigingen zijn nog niet gepubliceerd.'}"/>
+		<mx:Button label="Publiceren" click="publish()" enabled="{cvXml != null}"/>
 	</mx:HBox>
 </mx:VBox>
