@@ -32,7 +32,7 @@
 			[Embed(source="/assets/icon_flag_UK.png")] public static const ICON_FLAG_UK:Class;
 			
 			public static const APP_TITLE:String = "Cerios (Valori) CVtool";
-			public static const APP_VERSION:String = "v20191223";
+			public static const APP_VERSION:String = "v20191227";
 			public static const ROL_EDIT_EIGEN_CV:String = "edit eigen CV";
 			public static const ROL_VIEW_ALLE_CVS:String = "view alle CVs";
 			public static const REST_APP:String = "cv";

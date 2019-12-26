@@ -60,12 +60,12 @@
 			}
 			
 			private function getInfoHtml(signedInAccountXml:XML):String {
-				const listItem:String = "\n&nbsp;&nbsp;&nbsp;&nbsp;▪ ";
+				const listItem:String = "\n\n&nbsp;&nbsp;&nbsp;&nbsp;▪ ";
 				const listLine:String = "\n&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
 				return "Welkom " + XmlUtils.getTextContent(signedInAccountXml, "name").replace(/\..*/g, '')
 					+ "\n\nDit is versie <b>" + CVtool.APP_VERSION + "</b> van de <b>Cerios (Valori) CVtool</b>, waarmee je je curriculum vitae zowel in het Nederlands als in het Engels kunt invoeren."
 					+ "\nAls je dit leest ben je een 'manager' en kun je tevens de accounts beheren en ieders CV opvragen."
-					+ "\nLet even op het volgende:\n"
+					+ "\nLet even op het volgende:"
 					+ listItem + "<i>AutoSave</i>: al je wijzigingen worden na twee seconden vanzelf opgeslagen."
 					+ listLine + "Als je niet van plan bent iets te wijzigen, zet 'AutoSave' dan uit met de knop rechtsonder."
 					+ listItem + "<i>Sorteren</i>: gegevens in tabellen kun je sorteren door op de kolomheader te klikken."
@@ -74,7 +74,7 @@
 					+ "\n\nIk heb geprobeerd alles zo gebruiksvriendelijk mogelijk te maken, maar tips en (positieve ;-) kritiek zijn altijd welkom."
 					+ "\nProblemen? Een bug ontdekt? Stuur even een mailtje naar "
 					+ "<a target='blank' href='mailto:RobBosman@valori.nl?subject=CVtool'><u>RobBosman@valori.nl</u></a>."
-					+ "\n\nGroeten!\nRob";
+					+ "\n\nEnjoy!\nRob";
 			}
 
 		]]>

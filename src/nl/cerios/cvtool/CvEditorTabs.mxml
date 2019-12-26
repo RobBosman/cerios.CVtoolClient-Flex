@@ -13,6 +13,7 @@
 			import nl.bransom.PersistencyStatus;
 			import nl.bransom.RemoteInvokerHttp;
 			import nl.bransom.XmlUtils;
+			import nl.bransom.gui.Utils;
 			import nl.bransom.rest.RestClient;
 
 			[Bindable] public var restClient:RestClient;
@@ -49,14 +50,14 @@
 			}
 			
 			private function getInfoHtml(signedInAccountXml:XML):String {
-				const listItem:String = "\n&nbsp;&nbsp;&nbsp;&nbsp;▪ ";
+				const listItem:String = "\n\n&nbsp;&nbsp;&nbsp;&nbsp;▪ ";
 				const listLine:String = "\n&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
 				return "Welkom " + XmlUtils.getTextContent(signedInAccountXml, "name").replace(/\..*/g, '')
 					+ "\n\nDit is versie <b>" + CVtool.APP_VERSION + "</b> van de <b>Cerios (Valori) CVtool</b>, waarmee je je curriculum vitae zowel in het Nederlands als in het Engels kunt invoeren."
-					+ "\nLet even op het volgende:\n"
+					+ "\nLet even op het volgende:"
 					+ listItem + "<i>AutoSave</i>: al je wijzigingen worden na twee seconden vanzelf opgeslagen."
 					+ listLine + "Als je niet van plan bent iets te wijzigen, zet 'AutoSave' dan uit met de knop rechtsonder."
-					+ listItem + "<i>Publiceren</i> plaatst je cv in de <a target='blank' href='https://valorinl.sharepoint.com/sites/Kantoor/CV_databank'><u>CV Databank</u></a> in SharePoint"
+					+ listItem + "<i>Publiceren</i> plaatst je cv in de <a target='blank' href='https://valorinl.sharepoint.com/sites/Kantoor/CV_databank'><u>CV Databank in SharePoint</u></a>."
 					+ listItem + "<i>Sorteren</i>: gegevens in tabellen kun je sorteren door op de kolomheader te klikken."
 					+ listLine + "Het sorteren van tabelgegevens heeft geen invloed op de volgorde in je cv, behalve bij <i>Werkopdrachten</i>."
 					+ listLine + "Die zijn standaard gesorteerd op einddatum, maar dat kun je met drag&drop aanpassen."
@@ -64,7 +65,7 @@
 					+ "\n\nIk heb geprobeerd alles zo gebruiksvriendelijk mogelijk te maken, maar tips en (positieve ;-) kritiek zijn altijd welkom."
 					+ "\nProblemen? Een bug ontdekt? Stuur even een mailtje naar "
 					+ "<a target='blank' href='mailto:RobBosman@valori.nl?subject=CVtool'><u>RobBosman@valori.nl</u></a>."
-					+ "\n\nGroeten!\nRob";
+					+ "\n\nEnjoy!\nRob";
 			}
 			
 			public static function previewCv(restClient:RestClient, accountId:String, locale:String,
@@ -118,7 +119,8 @@
 			// Send a publish-in-SharePoint-request to the REST server.
 			private function publishInSharePoint(dummy:* = null, nextTask:ChainableTask = null):void {
 				// Compose the document name...
-				var docName:String = "CV_" + CVtool.selectedLocaleInfo.locale.substr(3) + "_"
+				var locale:String = CVtool.selectedLocaleInfo.locale;
+				var docName:String = "CV_" + locale.substr(3) + "_"
 						+ XmlUtils.getTextContent(persoonsgegevensXml, "voornaam")
 						+ XmlUtils.getTextContent(persoonsgegevensXml, "tussenvoegsel")
 						+ XmlUtils.getTextContent(persoonsgegevensXml, "achternaam");
@@ -126,9 +128,8 @@
 				var url:String = "publishToSharePoint.php";
 				var formData:String = "restTarget=" + CVtool.REST_APP + "/_account/" + signedInAccountXml.@id
 					+ "&documentName=" + encodeURIComponent(docName)
-					+ "&locale=" + "nl_NL"
+					+ "&locale=" + locale
 					+ "&layout=" + "Valori";
-				// formData += "&authBasic=" + "Y3Z0b29sOmN2dG9vbA==";
 				
 				// Request the REST server to publish the data.
 				var remoteInvoker:RemoteInvokerHttp = new RemoteInvokerHttp();
@@ -144,7 +145,7 @@
 				restClient.status = PersistencyStatus.PUBLISHING;
 			}
 			private function publishErrorCallback(remoteInvoker:RemoteInvokerHttp):void {
-				restClient.errorHtmlText = remoteInvoker.getResponseText();
+				restClient.errorHtmlText = remoteInvoker.getErrorResponseHtml();
 				restClient.status = PersistencyStatus.UNCHANGED;
 			}
 			private function publishOkCallback(remoteInvoker:RemoteInvokerHttp):void {
@@ -153,6 +154,8 @@
 				var context:Object = remoteInvoker.context;
 				if (context.nextTask != null) {
 					context.nextTask.execute();
+				} else {
+					Utils.alert(remoteInvoker.getResponseText(), "INFO");
 				}
 			}
 		]]>
@@ -186,11 +189,11 @@
 	<mx:HBox width="100%" verticalAlign="middle">
 		<mx:Button label="Preview"
 				   click="previewCv(restClient, signedInAccountXml.@id, CVtool.selectedLocaleInfo.locale, 'Valori', true)"
-				   enabled="{signedInAccountXml != null}" icon="{CVtool.selectedLocaleInfo.icon}"
+				   enabled="{cvXml != null}" icon="{CVtool.selectedLocaleInfo.icon}"
 				   labelPlacement="left"/>
 		<mx:Spacer width="100%"/>
 		<mx:Label styleName="{(cvXml.@published == 'true') ? 'published' : 'unpublished'}"
-				  text="{(cvXml.@published == 'true') ? 'Deze gegevens zijn gepubliceerd.'                  : 'De wijzigingen zijn nog niet gepubliceerd.'}"/>
+				  text="{(cvXml.@published == 'true') ? 'Deze gegevens zijn gepubliceerd.' : 'De wijzigingen zijn nog niet gepubliceerd.'}"/>
 		<mx:Button label="Publiceren" click="publish()" enabled="{cvXml != null}"/>
 	</mx:HBox>
 </mx:VBox>
