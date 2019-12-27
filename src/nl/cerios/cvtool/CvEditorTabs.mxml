@@ -149,13 +149,12 @@
 				restClient.status = PersistencyStatus.UNCHANGED;
 			}
 			private function publishOkCallback(remoteInvoker:RemoteInvokerHttp):void {
+				Utils.alert(remoteInvoker.getResponseText(), "INFO");
 				restClient.status = PersistencyStatus.UNCHANGED;
 				// Continue with any follow-up task.
 				var context:Object = remoteInvoker.context;
 				if (context.nextTask != null) {
 					context.nextTask.execute();
-				} else {
-					Utils.alert(remoteInvoker.getResponseText(), "INFO");
 				}
 			}
 		]]>
