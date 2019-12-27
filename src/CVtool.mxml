@@ -178,8 +178,8 @@
 						 x.SIGNED_IN_ADMIN="0" y.SIGNED_IN_ADMIN="0"
 						 x.SIGNED_IN_STAFF="0" y.SIGNED_IN_STAFF="0">
 					<mx:Image source="{CERIOS_BANNER}" />
-					<mx:Label text="VALORI" styleName="valori" height="100%" />
-					<mx:Label text="CVtool" styleName="title" height="100%" />
+					<mx:Label text="VALORI" styleName="valori" />
+					<mx:Label text="CVtool" styleName="title" />
 				</mx:HBox>
 				<mx:VBox width="100%" height="100%" includeIn="SIGNED_IN_ADMIN,SIGNED_IN_STAFF">
 					<mx:HBox id="signedInStuff" verticalAlign="middle" width="100%">
