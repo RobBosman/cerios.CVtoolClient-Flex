@@ -92,7 +92,7 @@
 		<gui:columns>
 			<mx:DataGridColumn width="20" sortable="false" />
 			<mx:DataGridColumn headerText="Naam" itemRenderer="{cmpNaam}" rendererIsEditor="true"
-							   width="100" />
+							   width="150" />
 			<mx:DataGridColumn headerText="Manager" itemRenderer="{cmpManagerNaam}" rendererIsEditor="true"
 							   width="200" />
 			<mx:DataGridColumn headerText="Email" itemRenderer="{cmpManagerEmail}" rendererIsEditor="true"

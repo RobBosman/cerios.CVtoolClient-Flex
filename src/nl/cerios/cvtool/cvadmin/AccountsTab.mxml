@@ -219,7 +219,7 @@
 				<mx:DataGridColumn width="20" sortable="false" />
 				<mx:DataGridColumn headerText="Naam" itemRenderer="{cmpName}" rendererIsEditor="true" width="230" />
 				<mx:DataGridColumn headerText="Business unit" itemRenderer="{cmpBusinessunit}" rendererIsEditor="true"
-								   sortCompareFunction="compareBusinessunit" width="115" />
+								   sortCompareFunction="compareBusinessunit" width="170" />
 				<mx:DataGridColumn headerText="Rol '{CVtool.ROL_EDIT_EIGEN_CV}'" itemRenderer="{cmpRolEditEigenCV}"
 								   rendererIsEditor="true" resizable="false" sortCompareFunction="compareRolEditEigenCV"
 								   width="145" />

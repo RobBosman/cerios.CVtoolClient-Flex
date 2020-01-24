@@ -1,26 +1,10 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<!-- saved from url=(0014)about:internet -->
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"> 
-    <!-- 
-    Smart developers always View Source. 
-    
-    This application was built using Adobe Flex, an open source framework
-    for building rich Internet applications that get delivered via the
-    Flash Player or to desktops via Adobe AIR. 
-    
-    Learn more about Flex at http://flex.org 
-    // -->
+<!DOCTYPE html>
+<html lang="en">
     <head>
-        <title>Cerios (Valori) CVtool</title>
-        <link rel="shortcut icon" type="image/x-icon" href="CVtool.ico" />
-        <meta name="google" value="notranslate" />         
+        <title>Valori CVtool</title>
+        <link rel="shortcut icon" type="image/x-icon" href="assets/favicon.ico" />
+        <meta name="google" value="notranslate" />
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-        <!-- Include CSS to eliminate any default margins/padding and set the height of the html element and 
-             the body element to 100%, because Firefox, or any Gecko based browser, interprets percentage as 
-             the percentage of the height of its parent container, which has to be set explicitly.  Fix for
-             Firefox 3.6 focus border issues.  Initially, don't display flashContent div so it won't show 
-             if JavaScript disabled.
-        -->
         <style type="text/css" media="screen"> 
             html, body  { height:100%; }
             body { margin:0; padding:0; overflow:auto; background-color: #FAFAFA; }
@@ -35,27 +19,14 @@
             .flash * {
 				text-align:center;
 			}
-			@font-face {
-				font-family: ValoriFont;
-				src: url(assets/Cabin-Bold-TTF.ttf);
-			}
-			.valori {
-				color: #211a58;
-				font-family: ValoriFont;
-			}
         </style>
         
-        <!-- Enable Browser History by replacing useBrowserHistory tokens with two hyphens -->
-        <!-- BEGIN Browser History required section ${useBrowserHistory}>
         <link rel="stylesheet" type="text/css" href="history/history.css" />
         <script type="text/javascript" src="history/history.js"></script>
-        <!${useBrowserHistory} END Browser History required section -->  
             
         <script type="text/javascript" src="swfobject.js"></script>
         <script type="text/javascript">
-            // For version detection, set to min. required Flash Player version, or 0 (or 0.0.0), for no version detection. 
             var swfVersionStr = "${version_major}.${version_minor}.${version_revision}";
-            // To use express install, set to playerProductInstall.swf, otherwise the empty string. 
             var xiSwfUrlStr = "${expressInstallSwf}";
             var flashvars = {};
             var params = {};
@@ -72,17 +43,12 @@
                 "${width}", "${height}", 
                 swfVersionStr, xiSwfUrlStr, 
                 flashvars, params, attributes);
-            // JavaScript enabled so display the flashContent div in case it is not replaced with a swf object.
             swfobject.createCSS("#flashContent", "display:block;text-align:left;");
         </script>
     </head>
     <body>
-        <!-- SWFObject's dynamic embed method replaces this alternative HTML content with Flash content when enough 
-             JavaScript and Flash plug-in support is available. The div is initially hidden so that it doesn't show
-             when JavaScript is disabled.
-        -->
         <div id="flashContent" class="flash">
-			<h2>Welkom bij de <span style='color: #ed7700;'><strike>Cerios</strike></span> <span class='valori'>VALORI</span> CVtool!</h2>
+			<h1>Welkom bij de <img src='assets/valori_name.png' alt='Valori' height='28px'/> <span style='color: #666666;'>CVtool</span>!</h1>
             <p>
 				Deze webapplicatie vereist dat Adobe Flash is ingeschakeld.
 				<br/>Flash wordt echter uitgefaseerd. Browsers ondersteunen het nog wel, maar het wordt standaard geblokkeerd.
@@ -90,16 +56,12 @@
 				<br/><br/>
 				<script type="text/javascript">
 					document.write("<a href='http://www.adobe.com/go/getflashplayer'>" 
-									+ "<img src='https://www.adobe.com/images/shared/download_buttons/get_flash_player.gif' alt='Get Adobe Flash player' /></a>" ); 
+									+ "<img src='assets/get_flash_player.gif' alt='Get Adobe Flash player' /></a>" ); 
 				</script>
 				<br/><br/>
-				<i>De CVtool wordt omgebouwd zodat die niet langer afhankelijk is van Adobe Flash.
+				<i>De CVtool wordt momenteel omgebouwd zodat die niet langer afhankelijk is van Adobe Flash.
 				<br/>Dat moet uiterlijk eind 2020 klaar zijn, want dan wordt de Flash ondersteuning definitief beëindigd.
 				<br/>Tot die tijd moet je Flash dus elke keer opnieuw inschakelen.</i>
-                <!--
-				To view this page ensure that Adobe Flash Player version 
-                11.1.0 or greater is installed.
-				-->
             </p>
         </div>
         
@@ -118,22 +80,19 @@
                     <param name="allowFullScreen" value="true" />
                 <!--<![endif]-->
 					<div class="flash">
-                <!--[if gte IE 6]>-->
-						<h2>Welkom bij de <span style='color: #ed7700;'><strike>Cerios</strike></span> <span class='valori'>VALORI</span> CVtool!</h2>
+						<h1>Welkom bij de <img src='assets/valori_name.png' alt='Valori' height='28px'/> <span style='color: #666666;'>CVtool</span>!</h1>
 						<p>
 							Deze webapplicatie vereist dat Adobe Flash is ingeschakeld.
-							<br/>Flash wordt echter uitgefaseerd.
-							<br/>Browsers ondersteunen het nog wel, maar het wordt standaard geblokkeerd.
+							<br/>Flash wordt echter uitgefaseerd. Browsers ondersteunen het nog wel, maar het wordt standaard geblokkeerd.
 							<br/><br/>Hiermee kun je het (tijdelijk en alleen voor deze webapplicatie) inschakelen:
 							<br/><br/>
-							<!-- 
-								Either scripts and active content are not permitted to run or Adobe Flash Player version
-								${version_major}.${version_minor}.${version_revision} or greater is not installed.
-							-->
-                <!--<![endif]-->
 							<a href="http://www.adobe.com/go/getflashplayer">
-								<img src="http://www.adobe.com/images/shared/download_buttons/get_flash_player.gif" alt="Get Adobe Flash Player" />
+								<img src="assets/get_flash_player.gif" alt="Get Adobe Flash Player" />
 							</a>
+							<br/><br/>
+							<i>De CVtool wordt momenteel omgebouwd zodat die niet langer afhankelijk is van Adobe Flash.
+							<br/>Dat moet uiterlijk eind 2020 klaar zijn, want dan wordt de Flash ondersteuning definitief beëindigd.
+							<br/>Tot die tijd moet je Flash dus elke keer opnieuw inschakelen.</i>
 						</p>
 					</div>
                 <!--[if !IE]>-->

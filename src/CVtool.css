@@ -49,19 +49,6 @@ mx|DataGrid {
 	background-color: #FFFF00;
 }
 
-@font-face {
-	src:url("assets/Cabin-Bold-TTF.ttf");
-	fontFamily: ValoriFont;
-	embedAsCFF: true;
-}
-
-.valori {
-	/* color: #0A1C5C; */
-	color: #211a58;
-	font-family: ValoriFont;
-	font-weight: bold;
-	font-size: 46;
-}
 .title {
 	color: #666666;
 	font-weight: bold;

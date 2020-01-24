@@ -108,7 +108,7 @@
 			<mx:DataGridColumn width="20" sortable="false" />
 			<mx:DataGridColumn headerText="Naam" itemRenderer="{cmpName}" rendererIsEditor="true" width="230" />
 			<mx:DataGridColumn headerText="Business unit" itemRenderer="{cmpBusinessunit}" rendererIsEditor="true"
-							   sortCompareFunction="compareBusinessunit" width="115" />
+							   sortCompareFunction="compareBusinessunit" width="150" />
 		</gui:columns>
 	</gui:XmlDataGrid>
 	<mx:VBox height="100%">

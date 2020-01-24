@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<mx:Application xmlns:fx="http://ns.adobe.com/mxml/2009" 
+<mx:Application xmlns:fx="http://ns.adobe.com/mxml/2009"
 				xmlns:mx="library://ns.adobe.com/flex/mx"
 				xmlns:s="library://ns.adobe.com/flex/spark"
 				xmlns:gui="nl.bransom.gui.*"
@@ -8,7 +8,7 @@
 				xmlns:cveditor="nl.cerios.cvtool.cveditor.*"
 				creationComplete="init()">
 	
-	<fx:Style source="CVtool.css" />
+	<fx:Style source="CVtool.css"/>
 	
 	<fx:Script>
 		<![CDATA[
@@ -23,7 +23,7 @@
 			import nl.bransom.gui.Utils;
 			import nl.bransom.rest.RestClient;
 			
-			[Embed(source="/assets/Cerios_banner_struck.png")] public static const CERIOS_BANNER:Class;
+			[Embed(source="/assets/Valori_name.png")] public static const VALORI_NAME:Class;
 			[Embed(source="/assets/CVtool.png")] public static const CVTOOL_IMG:Class;
 			[Embed(source="/assets/icon_create.png")] public static const ICON_CREATE:Class;
 			[Embed(source="/assets/icon_change.png")] public static const ICON_CHANGE:Class;
@@ -31,8 +31,8 @@
 			[Embed(source="/assets/icon_flag_NL.png")] public static const ICON_FLAG_NL:Class;
 			[Embed(source="/assets/icon_flag_UK.png")] public static const ICON_FLAG_UK:Class;
 			
-			public static const APP_TITLE:String = "Cerios (Valori) CVtool";
-			public static const APP_VERSION:String = "v20191227";
+			public static const APP_TITLE:String = "Valori CVtool";
+			public static const APP_VERSION:String = "v20200124";
 			public static const ROL_EDIT_EIGEN_CV:String = "edit eigen CV";
 			public static const ROL_VIEW_ALLE_CVS:String = "view alle CVs";
 			public static const REST_APP:String = "cv";
@@ -106,11 +106,11 @@
 			}
 			
 			private function getSignInText():String {
-				return "Om de CVtool te gebruiken moet je je aanmelden met je <b>VALORI</b> account."
+				return "Om de CVtool te gebruiken moet je je aanmelden met je <b>Valori</b> account."
 					+ "\nTijdens het inlogproces controleert de CVtool je account, je moet daar eenmalig toestemming voor geven."
 					+ "\n\n<a target='blank' href='https://account.activedirectory.windowsazure.com/r/#/applications'><u><b>Hier</b></u></a>"
 					+ " kun je die toestemming bekijken en eventueel weer intrekken."
-					+ "\nAls je de 'Cerios (Valori) CVtool' app verwijdert blijven je CV-gegevens bewaard."
+					+ "\nAls je de <i>Valori CVtool</i> app verwijdert blijven je cv-gegevens bewaard."
 					+ "\nNa opnieuw inloggen (en toestemming verlenen) kun je daar weer bij."
 					+ "\n<i>Problemen? <a target='blank' href='mailto:RobBosman@valori.nl?subject=CVtool'><u>Mail</u></a> even!</i>";
 			}
@@ -143,81 +143,85 @@
 	</fx:Script>
 	
 	<mx:states>
-		<mx:State name="INIT" />
-		<mx:State name="SIGNED_OUT" />
-		<mx:State name="SIGNED_IN_ADMIN" />
-		<mx:State name="SIGNED_IN_STAFF" />
+		<mx:State name="INIT"/>
+		<mx:State name="SIGNED_OUT"/>
+		<mx:State name="SIGNED_IN_ADMIN"/>
+		<mx:State name="SIGNED_IN_STAFF"/>
 	</mx:states>
 	
 	<mx:transitions>
 		<mx:Transition fromState="INIT,SIGNED_OUT" toState="*">
 			<mx:Parallel>
-				<mx:Fade targets="{[signInTab, cvAdmin, cvEditor, signedInStuff, statusControlBar]}" />
-				<mx:Move targets="{[logo, logoBar]}" />
+				<mx:Fade targets="{[signInTab, cvAdmin, cvEditor, signedInStuff, statusControlBar]}"/>
+				<mx:Move targets="{[logo, logoBar]}"/>
 			</mx:Parallel>
 		</mx:Transition>
 		<mx:Transition fromState="*" toState="SIGNED_OUT">
 			<mx:Parallel>
-				<mx:Fade targets="{[signInTab, cvAdmin, cvEditor, signedInStuff, statusControlBar]}" />
-				<mx:Move targets="{[logo, logoBar]}" />
+				<mx:Fade targets="{[signInTab, cvAdmin, cvEditor, signedInStuff, statusControlBar]}"/>
+				<mx:Move targets="{[logo, logoBar]}"/>
 			</mx:Parallel>
 		</mx:Transition>
 	</mx:transitions>
 
-	<gui:DebugControlBar id="debugControlBar" restClient="{restClient}" appTitle="{APP_TITLE}"
-						 width="100%" styleName="debug-control-bar" />
+	<gui:DebugControlBar id="debugControlBar" width="100%" appTitle="{APP_TITLE}"
+						 restClient="{restClient}" styleName="debug-control-bar"/>
 
 	<mx:Canvas width="100%" height="100%">
-		<mx:Image source="{CVTOOL_IMG}" alpha="0.1" width="100%" height="70%" horizontalAlign="right" right="20"
-				  bottom="0" />
+		<mx:Image right="20" bottom="0" width="100%" height="70%" alpha="0.1" horizontalAlign="right"
+				  source="{CVTOOL_IMG}"/>
 		<mx:VBox width="100%" height="100%">
 			<mx:HBox id="logoBar" width="100%" horizontalAlign="center" verticalAlign="top"
 					 height.INIT="40%" verticalAlign.INIT="bottom"
 					 height.SIGNED_OUT="40%" verticalAlign.SIGNED_OUT="bottom">
-				<mx:HBox id="logo" verticalAlign="middle"
+				<mx:HBox id="logo" styleName="title" verticalAlign="middle"
 						 x.SIGNED_IN_ADMIN="0" y.SIGNED_IN_ADMIN="0"
 						 x.SIGNED_IN_STAFF="0" y.SIGNED_IN_STAFF="0">
-					<mx:Image source="{CERIOS_BANNER}" />
-					<mx:Label text="VALORI" styleName="valori" />
-					<mx:Label text="CVtool" styleName="title" />
+					<mx:Image scaleX="0.32" scaleY="0.32" source="{VALORI_NAME}"/>
+					<mx:Label text="CVtool"/>
 				</mx:HBox>
-				<mx:VBox width="100%" height="100%" includeIn="SIGNED_IN_ADMIN,SIGNED_IN_STAFF">
-					<mx:HBox id="signedInStuff" verticalAlign="middle" width="100%">
-						<mx:Label text="{APP_VERSION}" styleName="version" top="0" />
-						<mx:Spacer width="100%" />
-						<mx:Label htmlText="" /><!-- dummy label to prevent the next label from mysteriously disappearing... -->
-						<mx:Label htmlText="aangemeld als &#x3C;b&#x3E;{
-								  XmlUtils.getTextContent(signedInAccountXml, 'name').replace(/\./g, ' ')
-								  }&#x3C;/b&#x3E;" verticalCenter="0" />
-						<mx:Button label="Afmelden" click="signOut()" verticalCenter="0" />
+				<mx:VBox includeIn="SIGNED_IN_ADMIN,SIGNED_IN_STAFF" width="100%" height="100%">
+					<mx:HBox id="signedInStuff" width="100%" verticalAlign="middle">
+						<mx:Label top="0" styleName="version" text="{APP_VERSION}"/>
+						<mx:Spacer width="100%"/>
+						<mx:Label htmlText=""/><!-- dummy label to prevent the next label from mysteriously disappearing... -->
+						<mx:Label htmlText="aangemeld als &lt;b&gt;{           XmlUtils.getTextContent(signedInAccountXml, 'name').replace(/\./g, ' ')           }&lt;/b&gt;"
+								  verticalCenter="0"/>
+						<mx:Button label="Afmelden" click="signOut()" verticalCenter="0"/>
 					</mx:HBox>
-					<mx:HBox id="language" width="100%" horizontalAlign="right" verticalAlign="middle" >
-						<mx:Label text="taalkeuze" />
-						<mx:ComboBox id="localeCombo" dataProvider="{CVtool.LOCALE_INFO}" 
-									 selectedItem="{CVtool.selectedLocaleInfo}"
-									 change="CVtool.selectedLocaleInfo = localeCombo.selectedItem" />
+					<mx:HBox id="language" width="100%" horizontalAlign="right"
+							 verticalAlign="middle">
+						<mx:Label text="taalkeuze"/>
+						<mx:ComboBox id="localeCombo"
+									 change="CVtool.selectedLocaleInfo = localeCombo.selectedItem"
+									 dataProvider="{CVtool.LOCALE_INFO}"
+									 selectedItem="{CVtool.selectedLocaleInfo}"/>
 					</mx:HBox>
 				</mx:VBox>
 			</mx:HBox>
 			
-			<mx:VBox id="signInTab" includeIn="SIGNED_OUT" horizontalAlign="center" horizontalCenter="0" width="100%">
-				<mx:TextArea htmlText="{getSignInText()}" editable="false" textAlign="center" styleName="info"
-							 width="550" height="150" />
+			<mx:VBox id="signInTab" includeIn="SIGNED_OUT" width="100%" horizontalAlign="center"
+					 horizontalCenter="0">
+				<mx:TextArea width="550" height="150" editable="false" htmlText="{getSignInText()}"
+							 styleName="info" textAlign="center"/>
 				<mx:Button id="signInButton" label="Aanmelden" click="restClient.signIn()"/>
 			</mx:VBox>
 
-			<mx:ApplicationControlBar id="cvAdmin" includeIn="SIGNED_IN_ADMIN"
-									  styleName="main-container" width="100%" height="100%" >
-				<cvtool:CvAdminTabs restClient="{restClient}" signedInAccountXml="{signedInAccountXml}"
-									styleName="main-container" width="100%" height="100%" />
+			<mx:ApplicationControlBar id="cvAdmin" includeIn="SIGNED_IN_ADMIN" width="100%"
+									  height="100%" styleName="main-container">
+				<cvtool:CvAdminTabs width="100%" height="100%" restClient="{restClient}"
+									signedInAccountXml="{signedInAccountXml}"
+									styleName="main-container"/>
 			</mx:ApplicationControlBar>
-			<mx:ApplicationControlBar id="cvEditor" includeIn="SIGNED_IN_STAFF"
-									  width="100%" height="100%" >
-				<cvtool:CvEditorTabs restClient="{restClient}" signedInAccountXml="{signedInAccountXml}"
-									 styleName="main-container" width="100%" height="100%" />
+			<mx:ApplicationControlBar id="cvEditor" includeIn="SIGNED_IN_STAFF" width="100%"
+									  height="100%">
+				<cvtool:CvEditorTabs width="100%" height="100%" restClient="{restClient}"
+									 signedInAccountXml="{signedInAccountXml}"
+									 styleName="main-container"/>
 			</mx:ApplicationControlBar>
 		</mx:VBox>
 	</mx:Canvas>
 	
-	<gui:StatusControlBar id="statusControlBar" restClient="{restClient}" excludeFrom="INIT,SIGNED_OUT" width="100%" />
+	<gui:StatusControlBar id="statusControlBar" excludeFrom="INIT,SIGNED_OUT" width="100%"
+						  restClient="{restClient}"/>
 </mx:Application>
