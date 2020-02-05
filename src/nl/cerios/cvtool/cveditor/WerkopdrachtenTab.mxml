@@ -205,13 +205,13 @@
 		<mx:VBox horizontalAlign="right" verticalAlign="top" height="100%">
 			<mx:Label text="Rol" height="{rolGUI.height}" />
 			<mx:Text text="Opdracht- formulering" height="{opdrachtformuleringGUI.height}"
-					 textAlign="right" width="78" />
+					 textAlign="right" width="84" fontWeight="bold" />
 			<mx:Text text="Werk- zaamheden" height="{werkzaamhedenGUI.height}"
-					 textAlign="right" width="78" />
+					 textAlign="right" width="84" />
 			<mx:Text text="Resultaat" height="{resultaatGUI.height}"
-					 textAlign="right" width="78" />
+					 textAlign="right" width="84" />
 			<mx:Text text="Steek- woorden" height="{steekwoordenGUI.height}"
-					 textAlign="right" width="78" />
+					 textAlign="right" width="84" />
 		</mx:VBox>
 		<mx:VBox width="100%" height="100%">
 			<gui:XmlTextInput restClient="{restClient}" objectXml="{getWerkervaringXml(dataGrid.selectedItem, CVtool.selectedLocaleInfo.locale)}"
