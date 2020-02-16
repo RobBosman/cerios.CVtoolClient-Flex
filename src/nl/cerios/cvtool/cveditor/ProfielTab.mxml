@@ -31,9 +31,9 @@
 	</fx:Script>
 	
 	<mx:VBox horizontalAlign="right" verticalAlign="top" height="100%">
-		<mx:Label text="Profiel" height="{profielGUI.height}" />
+		<mx:Label text="Profielschets" height="{profielGUI.height}" />
 		<mx:Label text="Persoonlijke eigenschappen" height="{pers_eig_GUI.height}" />
-		<mx:Label text="Vaardigheden" height="{vaardighedenGUI.height}" />
+		<mx:Label text="Profielschets (aanvullend)" height="{vaardighedenGUI.height}" />
 		<mx:Label text="Interesses" height="{interessesGUI.height}" />
 	</mx:VBox>
 	<mx:VBox width="100%" height="100%">
