@@ -65,5 +65,7 @@
 	</mx:HBox>
 	<gui:XmlImage id="visitekaartjeGui" objectXml="{objectXml}" propertyName="visitekaartje"
 				  width="636" height="233" />
-	<mx:Label htmlText="&lt;i&gt;NB: het documentsjabloon gaat uit van een visitekaartje van ±636x233 pixels.&lt;/i&gt;" />
+	<mx:Label htmlText="&lt;i&gt;NB 1: upload geen afbeeldingen die groter zijn dan 1MB.&lt;/i&gt;" />
+	<mx:Label htmlText="&lt;i&gt;NB 2: het huidige Valori documentsjabloon bevat geen afbeelding en negeert deze upload.&lt;/i&gt;" />
+	<mx:Label htmlText="&lt;i&gt;NB 3: het oude Cerios documentsjabloon gaat uit van een visitekaartje van ±636x233 pixels.&lt;/i&gt;" />
 </mx:VBox>
