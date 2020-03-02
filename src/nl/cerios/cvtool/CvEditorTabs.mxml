@@ -62,8 +62,9 @@
 					+ listLine + "Het sorteren van tabelgegevens heeft geen invloed op de volgorde in je cv, behalve bij <i>Werkopdrachten</i>."
 					+ listLine + "Die zijn standaard gesorteerd op einddatum, maar dat kun je met drag&drop aanpassen."
 					+ listLine + "Dat kan handig zijn als je meerdere opdrachten tegelijk hebt."
-					+ listItem + "<i>Markdown lijst</i>: In veel tekstvelden kun je een opsomming maken door regels te laten beginnen met '<b>* </b>' (sterretje + spatie)."
-					+ listLine + "Dit wordt in het Word document omgezet naar een lijst met 'Valori bullets'."
+					+ listItem + "<i>Markdown lijst</i>: In veel tekstvelden kun je een opsomming maken door regels te laten beginnen met"
+				    + listLine + "'<b>* </b>' (sterretje + spatie) voor een lijst met 'Valori bullets' of met"
+					+ listLine + "'<b># </b>' (hekje + spatie) voor een genummerde lijst."
 					+ "\n\nIk heb geprobeerd alles zo gebruiksvriendelijk mogelijk te maken, maar tips en (positieve ;-) kritiek zijn altijd welkom."
 					+ "\nProblemen? Een bug ontdekt? Stuur even een mailtje naar "
 					+ "<a target='blank' href='mailto:RobBosman@valori.nl?subject=CVtool'><u>RobBosman@valori.nl</u></a>."
@@ -169,7 +170,6 @@
 		</mx:Canvas>
 		<cveditor:PersoonsgegevensTab label="Persoonsgegevens" objectXml="{persoonsgegevensXml}"
 									  restClient="{restClient}"/>
-		<cveditor:FotoTab label="Foto" objectXml="{persoonsgegevensXml}" restClient="{restClient}"/>
 		<cveditor:ProfielTab label="Profiel" cvXml="{cvXml}" objectName="profiel"
 							 restClient="{restClient}"/>
 		<cveditor:OpleidingTab label="Opleiding" objectName="opleiding" parentXml="{cvXml}"
