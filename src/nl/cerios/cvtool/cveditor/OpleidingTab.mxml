@@ -30,8 +30,8 @@
 			];
 			public static const OPTIONS_SOORT_OPLEIDING:Array = [
 				{label:"opleiding", data:0},
-				{label:"training vaktechnisch", data:1},
-				{label:"training algemeen", data:2}
+				{label:"cursus vaktechnisch", data:1},
+				{label:"cursus algemeen", data:2}
 			];
 			[Bindable] public static var _restClient:RestClient;
 			
@@ -46,6 +46,7 @@
 			
 			private function createItem(event:Event = null):void {
 				var createdXml:XML = restClient.createEntityNode(parentXml, objectName, 0);
+				createdXml.soort_opleiding = 0;
 				refreshXmlList();
 				dataGrid.selectedItem = createdXml;
 				dataGrid.scrollToIndex(dataGrid.selectedIndex);
