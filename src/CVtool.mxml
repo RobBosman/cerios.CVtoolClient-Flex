@@ -32,7 +32,7 @@
 			[Embed(source="/assets/icon_flag_UK.png")] public static const ICON_FLAG_UK:Class;
 			
 			public static const APP_TITLE:String = "Valori CVtool";
-			public static const APP_VERSION:String = "v20200303";
+			public static const APP_VERSION:String = "v20201213";
 			public static const ROL_EDIT_EIGEN_CV:String = "edit eigen CV";
 			public static const ROL_VIEW_ALLE_CVS:String = "view alle CVs";
 			public static const REST_APP:String = "cv";
@@ -113,6 +113,14 @@
 					+ "\nAls je de <i>Valori CVtool</i> app verwijdert blijven je cv-gegevens bewaard."
 					+ "\nNa opnieuw inloggen (en toestemming verlenen) kun je daar weer bij."
 					+ "\n<i>Problemen? <a target='blank' href='mailto:RobBosman@valori.nl?subject=CVtool'><u>Mail</u></a> even!</i>";
+			}
+			
+			private function getMovedText():String {
+				return "De CVtool is vernieuwd! Over een paar seconden word je doorgestuurd naar <a href=\"https://vcv01.valori.nl/\"><u>de nieuwe versie</u></a>.";
+			}
+			
+			private function getAbortAutoForwardTextText():String {
+				return "Mocht je de oude versie willen gebruiken, klik dan <a href=\"javascript:abortAutoForwarding()\"><u>hier</u></a>.";
 			}
 
 			private function signOut():void {
@@ -205,6 +213,11 @@
 				<mx:TextArea width="550" height="150" editable="false" htmlText="{getSignInText()}"
 							 styleName="info" textAlign="center"/>
 				<mx:Button id="signInButton" label="Aanmelden" click="restClient.signIn()"/>
+				<mx:Spacer height="100"/>
+				<mx:TextArea width="500" height="100" editable="false" htmlText="{getMovedText()}"
+							 styleName="moved" textAlign="center"/>
+				<mx:TextArea width="500" height="50" editable="false" htmlText="{getAbortAutoForwardTextText()}"
+							 styleName="info" textAlign="center"/>
 			</mx:VBox>
 
 			<mx:ApplicationControlBar id="cvAdmin" includeIn="SIGNED_IN_ADMIN" width="100%"

@@ -27,6 +27,17 @@
 			    position: absolute;
 			    z-index: -1;
 			}
+			#moved {
+				width: 80vw;
+				position: absolute;
+				left: 10vw;
+				top: 30vh;
+				transform: rotate(-20deg);
+			    z-index: +1;
+			}
+			#moved.autoForwardAborted {
+			    opacity: 0.1;
+			}
         </style>
         
         <link rel="stylesheet" type="text/css" href="history/history.css" />
@@ -110,5 +121,28 @@
         </noscript>
         
         <img id="background" src="assets/CVtool.png" alt="CVtool background" />
+        
+        <img id="moved" src="assets/we_have_moved.png" alt="WE HAVE MOVED">
+        <div id="autoForwardText" class="flash">
+          <p><span style="font-size: 22pt; font-weight: bold">De CVtool is vernieuwd! Over een paar seconden word je doorgestuurd naar <a href="https://vcv01.valori.nl/">de nieuwe versie</a>.</span></p>
+          <p>De oude versie wordt uitgefaseerd, omdat browsers
+          <br/>de onderliggende techniek (Flash) niet langer ondersteunen.
+          <br/>Mocht je de oude versie willen gebruiken, klik dan <a href="javascript:abortAutoForwarding()">hier</a>.</p>
+        </div>
+        <script>
+        	if (document.cookie.includes("abortAutoForwarding")) {
+	          document.getElementById("moved").className = "autoForwardAborted";
+	          document.getElementById("autoForwardText").style.display = "none";
+        	}
+	        function abortAutoForwarding() {
+	          document.cookie = "abortAutoForwarding; expires=" + new Date(new Date().getTime() + (24*60*60*1000)).toUTCString();
+	          document.getElementById("moved").className = "autoForwardAborted";
+	          document.getElementById("autoForwardText").style.display = "none";
+	        }
+	        setTimeout(() => {
+	          if (!document.cookie.includes("abortAutoForwarding"))
+	            window.location.href="https://vcv01.valori.nl";
+	        }, 8000);
+        </script>
    </body>
 </html>

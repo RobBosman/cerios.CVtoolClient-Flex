@@ -71,6 +71,12 @@ mx|DataGrid {
 	background-alpha: 0.0;
 	borderStyle: none;
 }
+.moved {
+	background-alpha: 0.0;
+	borderStyle: none;
+	font-weight: bold;
+	font-size: 22;
+}
 .heading-label {
 	font-weight: bold;
 }
