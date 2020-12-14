@@ -35,9 +35,6 @@
 				transform: rotate(-20deg);
 			    z-index: +1;
 			}
-			#moved.autoForwardAborted {
-			    opacity: 0.1;
-			}
         </style>
         
         <link rel="stylesheet" type="text/css" href="history/history.css" />
@@ -131,12 +128,12 @@
         </div>
         <script>
         	if (document.cookie.includes("abortAutoForwarding")) {
-	          document.getElementById("moved").className = "autoForwardAborted";
+	          document.getElementById("moved").style.display = "none";
 	          document.getElementById("autoForwardText").style.display = "none";
         	}
 	        function abortAutoForwarding() {
-	          document.cookie = "abortAutoForwarding; expires=" + new Date(new Date().getTime() + (24*60*60*1000)).toUTCString();
-	          document.getElementById("moved").className = "autoForwardAborted";
+	          document.cookie = "abortAutoForwarding; expires=" + new Date(new Date().getTime() + (60*1000)).toUTCString();
+	          document.getElementById("moved").style.display = "none";
 	          document.getElementById("autoForwardText").style.display = "none";
 	        }
 	        setTimeout(() => {
