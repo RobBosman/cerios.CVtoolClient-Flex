@@ -32,7 +32,7 @@
 			[Embed(source="/assets/icon_flag_UK.png")] public static const ICON_FLAG_UK:Class;
 			
 			public static const APP_TITLE:String = "Valori CVtool";
-			public static const APP_VERSION:String = "v20201213";
+			public static const APP_VERSION:String = "v20201214";
 			public static const ROL_EDIT_EIGEN_CV:String = "edit eigen CV";
 			public static const ROL_VIEW_ALLE_CVS:String = "view alle CVs";
 			public static const REST_APP:String = "cv";
@@ -116,7 +116,7 @@
 			}
 			
 			private function getMovedText():String {
-				return "De CVtool is vernieuwd! Over een paar seconden word je doorgestuurd naar <a href=\"https://vcv01.valori.nl/\"><u>de nieuwe versie</u></a>.";
+				return "De CVtool is vernieuwd! Over een paar seconden word je doorgestuurd naar <a href=\"https://cvtool.valori.nl/\"><u>de nieuwe versie</u></a>.";
 			}
 			
 			private function getAbortAutoForwardTextText():String {
